@@ -1,10 +1,10 @@
-# MIDIBINZ
-### Created by Gabe Lamorie, Josh Eugenio, Lindley Cannon and Tom Mathias
-### For James McTigue in DAT450 at Cogswell Polytechnical College
+# MIDIBINZ #
+### Created by Gabe Lamorie, Josh Eugenio, Lindley Cannon and Tom Matthias ###
+### For James McTigue in DAT450 at Cogswell Polytechnical College ###
 
 MIDIBINZ takes audio signal in and outputs MIDI information for controlling MIDI CC parameters.
 
-To Install VirtualEnv & Project
+### To Install VirtualEnv & Project ###
 
 Make sure virtualenv is installed in root Python 2.7:
 `pip install virtualenv`
