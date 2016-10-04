@@ -53,6 +53,10 @@ MainContentComponent::MainContentComponent()
     slider4Label.setText ("Slider4", dontSendNotification);
     slider4Label.setColour(slider4Label.textColourId, Colours::white);
     slider4Label.attachToComponent (&slider4, true);
+    
+    // Record Button
+    addAndMakeVisible(recordButton);
+    
 }
 
 MainContentComponent::~MainContentComponent()
