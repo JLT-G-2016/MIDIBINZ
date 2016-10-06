@@ -9,15 +9,15 @@
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "MainComponent.h"
 
+Component* createMainContentComponent();
 
 //==============================================================================
-class MIDIBinzApplication  : public JUCEApplication
+class MidiBinzApplication  : public JUCEApplication
 {
 public:
     //==============================================================================
-    MIDIBinzApplication() {}
+    MidiBinzApplication() {}
 
     const String getApplicationName() override       { return ProjectInfo::projectName; }
     const String getApplicationVersion() override    { return ProjectInfo::versionString; }
@@ -66,7 +66,8 @@ public:
                                                     DocumentWindow::allButtons)
         {
             setUsingNativeTitleBar (true);
-            setContentOwned (new MainContentComponent(), true);
+            setContentOwned (createMainContentComponent(), true);
+            setResizable (true, true);
 
             centreWithSize (getWidth(), getHeight());
             setVisible (true);
@@ -97,4 +98,4 @@ private:
 
 //==============================================================================
 // This macro generates the main() routine that launches the app.
-START_JUCE_APPLICATION (MIDIBinzApplication)
+START_JUCE_APPLICATION (MidiBinzApplication)

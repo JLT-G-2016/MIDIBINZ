@@ -5,13 +5,13 @@
 	<key>BuildMachineOSBuild</key>
 	<string>16A323</string>
 	<key>CFBundleDisplayName</key>
-	<string>MIDIBinz</string>
+	<string>MidiBinz</string>
 	<key>CFBundleExecutable</key>
-	<string>MIDIBinz</string>
+	<string>MidiBinz</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.yourcompany.MIDIBinz</string>
+	<string>com.yourcompany.MidiBinz</string>
 	<key>CFBundleName</key>
-	<string>MIDIBinz</string>
+	<string>MidiBinz</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

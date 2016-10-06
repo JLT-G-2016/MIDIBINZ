@@ -10,9 +10,9 @@
     <key>CFBundleIdentifier</key>
     <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
     <key>CFBundleName</key>
-    <string>MIDIBinz</string>
+    <string>MidiBinz</string>
     <key>CFBundleDisplayName</key>
-    <string>MIDIBinz</string>
+    <string>MidiBinz</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleSignature</key>

@@ -10,8 +10,8 @@
 
 */
 
-#ifndef __APPHEADERFILE_OFD8T0__
-#define __APPHEADERFILE_OFD8T0__
+#ifndef __APPHEADERFILE_ZBWXRU__
+#define __APPHEADERFILE_ZBWXRU__
 
 #include "AppConfig.h"
 
@@ -19,6 +19,7 @@
 #include <juce_audio_devices/juce_audio_devices.h>
 #include <juce_audio_formats/juce_audio_formats.h>
 #include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_audio_utils/juce_audio_utils.h>
 #include <juce_core/juce_core.h>
 #include <juce_cryptography/juce_cryptography.h>
 #include <juce_data_structures/juce_data_structures.h>
@@ -39,10 +40,10 @@
 #if ! JUCE_DONT_DECLARE_PROJECTINFO
 namespace ProjectInfo
 {
-    const char* const  projectName    = "MIDIBinz";
+    const char* const  projectName    = "MidiBinz";
     const char* const  versionString  = "1.0.0";
     const int          versionNumber  = 0x10000;
 }
 #endif
 
-#endif   // __APPHEADERFILE_OFD8T0__
+#endif   // __APPHEADERFILE_ZBWXRU__

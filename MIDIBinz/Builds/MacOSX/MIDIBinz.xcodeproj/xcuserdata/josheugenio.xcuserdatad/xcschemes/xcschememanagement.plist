@@ -4,7 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>MIDIBinz (App).xcscheme</key>
+		<key>MidiBinz (App).xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
@@ -12,7 +12,7 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>1350E3C0FBC56AE3E0E55B7D</key>
+		<key>E53FFC645D457DC32CED09BE</key>
 		<dict>
 			<key>primary</key>
 			<true/>

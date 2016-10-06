@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1350E3C0FBC56AE3E0E55B7D"
-               BuildableName = "MIDIBinz.app"
-               BlueprintName = "MIDIBinz (App)"
-               ReferencedContainer = "container:MIDIBinz.xcodeproj">
+               BlueprintIdentifier = "E53FFC645D457DC32CED09BE"
+               BuildableName = "MidiBinz.app"
+               BlueprintName = "MidiBinz (App)"
+               ReferencedContainer = "container:MidiBinz.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1350E3C0FBC56AE3E0E55B7D"
-            BuildableName = "MIDIBinz.app"
-            BlueprintName = "MIDIBinz (App)"
-            ReferencedContainer = "container:MIDIBinz.xcodeproj">
+            BlueprintIdentifier = "E53FFC645D457DC32CED09BE"
+            BuildableName = "MidiBinz.app"
+            BlueprintName = "MidiBinz (App)"
+            ReferencedContainer = "container:MidiBinz.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -55,10 +55,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1350E3C0FBC56AE3E0E55B7D"
-            BuildableName = "MIDIBinz.app"
-            BlueprintName = "MIDIBinz (App)"
-            ReferencedContainer = "container:MIDIBinz.xcodeproj">
+            BlueprintIdentifier = "E53FFC645D457DC32CED09BE"
+            BuildableName = "MidiBinz.app"
+            BlueprintName = "MidiBinz (App)"
+            ReferencedContainer = "container:MidiBinz.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -74,10 +74,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1350E3C0FBC56AE3E0E55B7D"
-            BuildableName = "MIDIBinz.app"
-            BlueprintName = "MIDIBinz (App)"
-            ReferencedContainer = "container:MIDIBinz.xcodeproj">
+            BlueprintIdentifier = "E53FFC645D457DC32CED09BE"
+            BuildableName = "MidiBinz.app"
+            BlueprintName = "MidiBinz (App)"
+            ReferencedContainer = "container:MidiBinz.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
