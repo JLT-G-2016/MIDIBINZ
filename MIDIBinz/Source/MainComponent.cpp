@@ -16,17 +16,24 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainContentComponent   : public AudioAppComponent, public Slider::Listener
+class MainContentComponent   : public AudioAppComponent, 
+                               public Slider::Listener,
+                               public ButtonListener
 {
 public:
     //==============================================================================
     MainContentComponent()
     {
         setSize (width, height);
+        
+        
+        
+        //Level Slider
         levelSlider.setRange (0.0, 0.25);
         levelSlider.setTextBoxStyle (Slider::TextBoxRight, false, 100, 20);
         levelLabel.setText ("Noise Level", dontSendNotification);
-        
+        levelLabel.setColour(slider1Label.textColourId, Colours::white);
+        levelLabel.attachToComponent(&levelSlider, true);
         addAndMakeVisible (levelSlider);
         addAndMakeVisible (levelLabel);
         
@@ -132,7 +139,7 @@ public:
                     float* outBuffer = bufferToFill.buffer->getWritePointer (channel, bufferToFill.startSample);
                     
                     for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
-                        outBuffer[sample] = inBuffer[sample] * random.nextFloat() * level;
+                        outBuffer[sample] = inBuffer[sample] * level;
                 }
             }
         }
@@ -166,11 +173,14 @@ public:
         slider2.setBounds (sliderLeft, 240, width - sliderLeft - 10, 20);
         slider3.setBounds (sliderLeft, 280, width - sliderLeft - 10, 20);
         slider4.setBounds (sliderLeft, 320, width - sliderLeft - 10, 20);
-        levelLabel.setBounds (10, 10, 90, 20);
-        levelSlider.setBounds (100, 10, width - 110, 20);
+        levelSlider.setBounds (100, 140, width - 100 - 10, 20);
     }
     void sliderValueChanged (Slider* slider) override
     {
+    }
+    void buttonClicked(Button* buttonThatWasClicked) override
+    {
+        
     }
 
 private:
@@ -193,6 +203,7 @@ private:
     Random random;
     Slider levelSlider;
     Label levelLabel;
+    TextButton recordButton;
     
     
 };

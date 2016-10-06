@@ -6,31 +6,31 @@
 	<dict>
 		<key>Info.plist</key>
 		<data>
-		DwdQR0NOZrP8ssdXj6/kc1n6uQU=
+		mtgSLvFY8pZ82QMukiBLyq9bu4k=
 		</data>
 		<key>LaunchImage-700-568h@2x.png</key>
 		<data>
-		tNPOJsnzdZyH9m99aIkUD5iX9b4=
+		875Sg4skXHBn8/6FtCUcJfBqLno=
 		</data>
 		<key>LaunchImage-700-Landscape@2x~ipad.png</key>
 		<data>
-		IrDPKyzb2XV4j3h7o7tGc+sq9w8=
+		5KusM3aaRCHuryM4D9dty5qzOos=
 		</data>
 		<key>LaunchImage-700-Landscape~ipad.png</key>
 		<data>
-		Ek++JCHzAft+nczwBaIozWfZKJE=
+		2qu/DWrgfgu6ifPzD9p/RhRaBCI=
 		</data>
 		<key>LaunchImage-700-Portrait@2x~ipad.png</key>
 		<data>
-		LN+CSoDBa7Zg9HQv3rIhdFxy/rY=
+		BLT7WWefM/jLA8ZeDt9XhwA9pLI=
 		</data>
 		<key>LaunchImage-700-Portrait~ipad.png</key>
 		<data>
-		pGs7Q8EUjEo9OIqK+nyRESDiMko=
+		DGlx+nrRGW09hCKkI06/lRLJ8XE=
 		</data>
 		<key>LaunchImage-700@2x.png</key>
 		<data>
-		D01Lf7XgzIBHiPibx4xDinw/H5w=
+		pntjQwUEVPDX6/tJUc7WbWswj/U=
 		</data>
 		<key>PkgInfo</key>
 		<data>
@@ -47,66 +47,66 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			tNPOJsnzdZyH9m99aIkUD5iX9b4=
+			875Sg4skXHBn8/6FtCUcJfBqLno=
 			</data>
 			<key>hash2</key>
 			<data>
-			00XQI4w8bRrfUvTDEXvpM3R9MAppTU+6assAzTi+B1U=
+			/oNLIWVsp5rQGg5yDlVDR+VXjRj9FUkRIGI8MkVazGo=
 			</data>
 		</dict>
 		<key>LaunchImage-700-Landscape@2x~ipad.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			IrDPKyzb2XV4j3h7o7tGc+sq9w8=
+			5KusM3aaRCHuryM4D9dty5qzOos=
 			</data>
 			<key>hash2</key>
 			<data>
-			xBrQzYAnPPuQfHHOrwPRqST0OwE0KnZYE+8LTCn+gkI=
+			81VtzYCwrNb7y1bMWqI/yfe5W1aoYsJCG2YPCCLP2pI=
 			</data>
 		</dict>
 		<key>LaunchImage-700-Landscape~ipad.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			Ek++JCHzAft+nczwBaIozWfZKJE=
+			2qu/DWrgfgu6ifPzD9p/RhRaBCI=
 			</data>
 			<key>hash2</key>
 			<data>
-			oSHt8M0SCropAshRyAWaSSxK7Vu2qSTqVU+7F0/ceDE=
+			BZHcjdwuf9A1R6ANMUVCFNTcBiHBLT8RGHfJbjO20a8=
 			</data>
 		</dict>
 		<key>LaunchImage-700-Portrait@2x~ipad.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			LN+CSoDBa7Zg9HQv3rIhdFxy/rY=
+			BLT7WWefM/jLA8ZeDt9XhwA9pLI=
 			</data>
 			<key>hash2</key>
 			<data>
-			mXK4+op6V0pBRQAj7go54NFZzlw8sB/DY2EPpIJw/Do=
+			puPQMFoUVoju/LvF+dm4eStNKIDxmVApZpk3WlpXnxM=
 			</data>
 		</dict>
 		<key>LaunchImage-700-Portrait~ipad.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			pGs7Q8EUjEo9OIqK+nyRESDiMko=
+			DGlx+nrRGW09hCKkI06/lRLJ8XE=
 			</data>
 			<key>hash2</key>
 			<data>
-			CWN+Kt8YKwa430CtG7pEpPqItvH5mVE5drZ/ndcfBBU=
+			k8WntGrI/XqY+SDImKjqXfG0FpXi9ef7hxIbxGXTWHw=
 			</data>
 		</dict>
 		<key>LaunchImage-700@2x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			D01Lf7XgzIBHiPibx4xDinw/H5w=
+			pntjQwUEVPDX6/tJUc7WbWswj/U=
 			</data>
 			<key>hash2</key>
 			<data>
-			unmTSbvH1qw+62tVZoGw/SQspI4Dz34737UI89Cx7t4=
+			fHZ8wZTMN1TUaVm8W1cNbp4NJHTEdT64NaZl6xbC11E=
 			</data>
 		</dict>
 		<key>embedded.mobileprovision</key>
