@@ -82,7 +82,8 @@ public:
         slider4Label.attachToComponent (&slider4, true);
     
         // Record Button
-        //addAndMakeVisible(recordButton);
+        addAndMakeVisible(recordButton);
+        
     }
 
     ~MainContentComponent()
@@ -174,6 +175,9 @@ public:
         slider3.setBounds (sliderLeft, 280, width - sliderLeft - 10, 20);
         slider4.setBounds (sliderLeft, 320, width - sliderLeft - 10, 20);
         levelSlider.setBounds (100, 140, width - 100 - 10, 20);
+        recordButton.setBounds(100, 450, width - 110, 20);
+        
+        
     }
     void sliderValueChanged (Slider* slider) override
     {

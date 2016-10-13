@@ -17,7 +17,7 @@
                BlueprintIdentifier = "E53FFC645D457DC32CED09BE"
                BuildableName = "MidiBinz.app"
                BlueprintName = "MidiBinz (App)"
-               ReferencedContainer = "container:MidiBinz.xcodeproj">
+               ReferencedContainer = "container:MIDIBinz.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,7 +35,7 @@
             BlueprintIdentifier = "E53FFC645D457DC32CED09BE"
             BuildableName = "MidiBinz.app"
             BlueprintName = "MidiBinz (App)"
-            ReferencedContainer = "container:MidiBinz.xcodeproj">
+            ReferencedContainer = "container:MIDIBinz.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -58,7 +58,7 @@
             BlueprintIdentifier = "E53FFC645D457DC32CED09BE"
             BuildableName = "MidiBinz.app"
             BlueprintName = "MidiBinz (App)"
-            ReferencedContainer = "container:MidiBinz.xcodeproj">
+            ReferencedContainer = "container:MIDIBinz.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -77,7 +77,7 @@
             BlueprintIdentifier = "E53FFC645D457DC32CED09BE"
             BuildableName = "MidiBinz.app"
             BlueprintName = "MidiBinz (App)"
-            ReferencedContainer = "container:MidiBinz.xcodeproj">
+            ReferencedContainer = "container:MIDIBinz.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

@@ -35,8 +35,10 @@
     </XCODE_MAC>
     <XCODE_IPHONE targetFolder="Builds/iOS" iosScreenOrientation="portraitlandscape">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MidiBinz"/>
-        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MidiBinz"/>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MidiBinz"
+                       iosCompatibility="10.0"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MidiBinz"
+                       iosCompatibility="10.0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../../../Applications/JUCE/modules"/>
