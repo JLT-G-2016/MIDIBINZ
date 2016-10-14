@@ -11,6 +11,94 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+
+class AltLookAndFeel : public LookAndFeel_V3
+{
+public:
+    AltLookAndFeel()
+    {
+        setColour (Slider::rotarySliderFillColourId, Colours::red);
+    }
+    
+    void drawRotarySlider (Graphics& g, int x, int y, int width, int height, float sliderPos,
+                           const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider) override
+    {
+        const float radius = jmin (width / 2, height / 2) - 4.0f;
+        const float centreX = x + width * 0.5f;
+        const float centreY = y + height * 0.5f;
+        const float rx = centreX - radius;
+        const float ry = centreY - radius;
+        const float rw = radius * 2.0f;
+        const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+        
+        // fill
+        g.setColour (Colours::orange);
+        g.fillEllipse (rx, ry, rw, rw);
+        
+        // outline
+        g.setColour (Colours::red);
+        g.drawEllipse (rx, ry, rw, rw, 1.0f);
+        
+        Path p;
+        const float pointerLength = radius * 0.33f;
+        const float pointerThickness = 2.0f;
+        p.addRectangle (-pointerThickness * 0.5f, -radius, pointerThickness, pointerLength);
+        p.applyTransform (AffineTransform::rotation (angle).translated (centreX, centreY));
+        
+        // pointer
+        g.setColour (Colours::yellow);
+        g.fillPath (p);
+    }
+    
+    void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
+                               bool isMouseOverButton, bool isButtonDown) override
+    {
+        Rectangle<int> buttonArea = button.getLocalBounds();
+        const int edge = 4;
+        
+        buttonArea.removeFromLeft (edge);
+        buttonArea.removeFromTop (edge);
+        
+        // shadow
+        g.setColour (Colours::darkgrey.withAlpha (0.5f));
+        g.fillRect (buttonArea);
+
+        const int offset = isButtonDown ? -edge / 2 : -edge;
+        buttonArea.translate (offset, offset);
+        
+        g.setColour (backgroundColour);
+        g.fillRect (buttonArea);
+    }
+    
+    void drawButtonText (Graphics& g, TextButton& button, bool isMouseOverButton, bool isButtonDown) override
+    {
+        Font font (getTextButtonFont (button, button.getHeight()));
+        g.setFont (font);
+        g.setColour (button.findColour (button.getToggleState() ? TextButton::textColourOnId
+                                        : TextButton::textColourOffId)
+                     .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));
+        
+        const int yIndent = jmin (4, button.proportionOfHeight (0.3f));
+        const int cornerSize = jmin (button.getHeight(), button.getWidth()) / 2;
+        
+        const int fontHeight = roundToInt (font.getHeight() * 0.6f);
+        const int leftIndent  = jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnLeft() ? 4 : 2));
+        const int rightIndent = jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnRight() ? 4 : 2));
+        const int textWidth = button.getWidth() - leftIndent - rightIndent;
+
+        const int edge = 4;
+        const int offset = isButtonDown ? edge / 2 : 0;
+
+        if (textWidth > 0)
+            g.drawFittedText (button.getButtonText(),
+                              leftIndent + offset, yIndent + offset, textWidth, button.getHeight() - yIndent * 2 - edge,
+                              Justification::centred, 2);
+    }
+    
+};
+
+
+
 //==============================================================================
 /*
     This component lives inside our window, and this is where you should put all
@@ -29,6 +117,8 @@ public:
         
         
         //Level Slider
+        levelSlider.setSliderStyle(Slider::Rotary);
+        
         levelSlider.setRange (0.0, 0.25);
         levelSlider.setTextBoxStyle (Slider::TextBoxRight, false, 100, 20);
         levelLabel.setText ("Noise Level", dontSendNotification);
@@ -158,7 +248,7 @@ public:
     void paint (Graphics& g) override
     {
         // (Our component is opaque, so we must completely fill the background with a solid colour)
-        g.fillAll (Colour (0xff001423));
+        g.fillAll (Colour (0xffa9a9a9));
 
 
         // You can add your drawing code here!
@@ -174,7 +264,7 @@ public:
         slider2.setBounds (sliderLeft, 240, width - sliderLeft - 10, 20);
         slider3.setBounds (sliderLeft, 280, width - sliderLeft - 10, 20);
         slider4.setBounds (sliderLeft, 320, width - sliderLeft - 10, 20);
-        levelSlider.setBounds (100, 140, width - 100 - 10, 20);
+        levelSlider.setBounds(100, 40, 200, 200);
         recordButton.setBounds(100, 450, width - 110, 20);
         
         
@@ -194,7 +284,7 @@ private:
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
-    int width = 300;
+    int width = 320;
     int height = 600;
     Slider slider1;
     Label slider1Label;
@@ -208,7 +298,7 @@ private:
     Slider levelSlider;
     Label levelLabel;
     TextButton recordButton;
-    
+    LookAndFeel_V3 otherLookAndFeel;
     
 };
 
