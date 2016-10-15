@@ -106,11 +106,12 @@ public:
 */
 class MainContentComponent   : public AudioAppComponent, 
                                public Slider::Listener,
-                               public ButtonListener
+                               public ButtonListener,
+                               private Timer
 {
 public:
     //==============================================================================
-    MainContentComponent()
+    MainContentComponent() : forwardFFT (fftOrder, false)
     {
         setSize (width, height);
         
@@ -129,7 +130,9 @@ public:
         
         
         // specify the number of input and output channels that we want to open
-        setAudioChannels (2, 2);
+        setAudioChannels (2, 0);
+        startTimerHz (60);
+        
         //Slider1 
         addAndMakeVisible(slider1);
         slider1.setRange(20, 20000.0);
@@ -203,39 +206,51 @@ public:
         // (to prevent the output of random noise)
         AudioIODevice* device = deviceManager.getCurrentAudioDevice();
         const BigInteger activeInputChannels = device->getActiveInputChannels();
-        const BigInteger activeOutputChannels = device->getActiveOutputChannels();
-        const int maxInputChannels = activeInputChannels.getHighestBit() + 1;
-        const int maxOutputChannels = activeOutputChannels.getHighestBit() + 1;
 
-        const float level = (float) levelSlider.getValue();
-        
-        for (int channel = 0; channel < maxOutputChannels; ++channel)
+                if (bufferToFill.buffer->getNumChannels() > 0)
         {
-            if ((! activeOutputChannels[channel]) || maxInputChannels == 0)
+            const float* channelData = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
+             
+            for (int i = 0; i < bufferToFill.numSamples; ++i)
             {
-                bufferToFill.buffer->clear (channel, bufferToFill.startSample, bufferToFill.numSamples);
-            }
-            else
-            {
-                const int actualInputChannel = channel % maxInputChannels; // [1]
-                
-                if (! activeInputChannels[channel]) // [2]
-                {
-                    bufferToFill.buffer->clear (channel, bufferToFill.startSample, bufferToFill.numSamples);
-                }
-                else // [3]
-                {
-                    const float* inBuffer = bufferToFill.buffer->getReadPointer (actualInputChannel,
-                                                                                 bufferToFill.startSample);
-                    float* outBuffer = bufferToFill.buffer->getWritePointer (channel, bufferToFill.startSample);
-                    
-                    for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
-                        outBuffer[sample] = inBuffer[sample] * level;
-                }
+                pushNextSampleIntoFifo (channelData[i]);
             }
         }
     }
+    
+    void timerCallback() override
+    {
+        if (nextFFTBlockReady)
+        {
+            printFFT();
+            nextFFTBlockReady = false;
+            repaint();
+        }
+    }
+    void pushNextSampleIntoFifo (float sample) noexcept
+    {
+        // if the fifo contains enough data, set a flag to say
+        // that the next line should now be rendered..
+        if (fifoIndex == fftSize)
+        {
+            if (! nextFFTBlockReady)
+            {
+                zeromem (fftData, sizeof (fftData));
+                memcpy (fftData, fifo, sizeof (fifo));
+                nextFFTBlockReady = true;
+            }
+            
+            fifoIndex = 0;
+        }
 
+        fifo[fifoIndex++] = sample;
+    }
+    void printFFT()
+    {
+        forwardFFT.performFrequencyOnlyForwardTransform (fftData);
+        std::cout << *fftData << std::endl;
+    }
+    
     void releaseResources() override
     {
         // This will be called when the audio device stops, or when it is being
@@ -243,7 +258,6 @@ public:
 
         // For more details, see the help for AudioProcessor::releaseResources()
     }
-
     //==============================================================================
     void paint (Graphics& g) override
     {
@@ -276,13 +290,25 @@ public:
     {
         
     }
+    enum
+    {
+        fftOrder = 10,
+        fftSize  = 1 << fftOrder
+    };
 
 private:
     //==============================================================================
 
     // Your private member variables go here...
 
+    FFT forwardFFT;
 
+    float fifo [fftSize];
+    float fftData [2 * fftSize];
+    int fifoIndex;
+    bool nextFFTBlockReady;
+    float audioOutput = 0.0;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
     int width = 320;
     int height = 600;
