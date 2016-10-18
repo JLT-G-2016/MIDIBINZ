@@ -32,11 +32,11 @@ public:
         const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
         
         // fill
-        g.setColour (Colours::orange);
+        g.setColour (Colours::royalblue);
         g.fillEllipse (rx, ry, rw, rw);
         
         // outline
-        g.setColour (Colours::red);
+        g.setColour (Colours::blue);
         g.drawEllipse (rx, ry, rw, rw, 1.0f);
         
         Path p;
@@ -46,9 +46,10 @@ public:
         p.applyTransform (AffineTransform::rotation (angle).translated (centreX, centreY));
         
         // pointer
-        g.setColour (Colours::yellow);
+        g.setColour (Colours::darkblue);
         g.fillPath (p);
     }
+    
     
     void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
                                bool isMouseOverButton, bool isButtonDown) override
@@ -66,8 +67,13 @@ public:
         const int offset = isButtonDown ? -edge / 2 : -edge;
         buttonArea.translate (offset, offset);
         
-        g.setColour (backgroundColour);
+        g.setColour (Colour(0xfffd0000));
         g.fillRect (buttonArea);
+        if (isButtonDown)
+        {
+            g.setColour (Colour(0xffbe0000));
+            g.fillRect (buttonArea);
+        }
     }
     
     void drawButtonText (Graphics& g, TextButton& button, bool isMouseOverButton, bool isButtonDown) override
@@ -95,6 +101,7 @@ public:
                               Justification::centred, 2);
     }
     
+    
 };
 
 
@@ -114,17 +121,19 @@ public:
     MainContentComponent() : forwardFFT (fftOrder, false)
     {
         setSize (width, height);
-        
-        
-        
+        buttonUp = Colour (0xffe30000);
+        buttonDown = Colour (0xff800000);
+        buttonText = "Hold To Record";
+        setLookAndFeel (&altLookAndFeel);
         //Level Slider
-        levelSlider.setSliderStyle(Slider::Rotary);
+        //levelSlider.setSliderStyle(Slider::Rotary);
         
         levelSlider.setRange (0.0, 0.25);
-        levelSlider.setTextBoxStyle (Slider::TextBoxRight, false, 100, 20);
-        levelLabel.setText ("Noise Level", dontSendNotification);
+        levelSlider.setValue(0.10);
+        levelSlider.setTextBoxStyle (Slider::NoTextBox, false, 100, 20);
+        levelLabel.setText ("Mic Level", dontSendNotification);
         levelLabel.setColour(slider1Label.textColourId, Colours::white);
-        levelLabel.attachToComponent(&levelSlider, true);
+        levelLabel.attachToComponent(&levelSlider, false);
         addAndMakeVisible (levelSlider);
         addAndMakeVisible (levelLabel);
         
@@ -137,46 +146,86 @@ public:
         addAndMakeVisible(slider1);
         slider1.setRange(20, 20000.0);
         slider1.setTextValueSuffix(" Hz");
-    
-    
+        slider1.setSliderStyle(Slider::Rotary);
+        slider1.setTextBoxStyle (Slider::TextBoxBelow, false, 100, 20);
         slider1Label.setText("Slider1", dontSendNotification);
         slider1Label.setColour(slider1Label.textColourId, Colours::white);
-        slider1Label.attachToComponent(&slider1, true);
+        //slider1Label.attachToComponent(&slider1, false);
         addAndMakeVisible(slider1Label);
     
         // Slider2 
         addAndMakeVisible (slider2);
         slider2.setRange (20, 20000.0);
         slider2.setTextValueSuffix (" Hz");
+        slider2.setSliderStyle(Slider::Rotary);
+        slider2.setTextBoxStyle (Slider::TextBoxBelow, false, 100, 20);
         slider2.addListener (this);
         addAndMakeVisible (slider2Label);
         slider2Label.setText ("Slider2", dontSendNotification);
         slider2Label.setColour(slider2Label.textColourId, Colours::white);
-        slider2Label.attachToComponent (&slider2, true);
+        //slider2Label.attachToComponent (&slider2, false);
     
         // Slider3
         addAndMakeVisible (slider3);
         slider3.setRange (20, 20000.0);
         slider3.setTextValueSuffix (" Hz");
+        slider3.setSliderStyle(Slider::Rotary);
+        slider3.setTextBoxStyle (Slider::TextBoxBelow, false, 100, 20);
         slider3.addListener (this);
         addAndMakeVisible (slider3Label);
         slider3Label.setText ("Slider3", dontSendNotification);
         slider3Label.setColour(slider3Label.textColourId, Colours::white);
-        slider3Label.attachToComponent (&slider3, true);
+        //slider3Label.attachToComponent (&slider3, false);
     
         // Slider4
         addAndMakeVisible (slider4);
         slider4.setRange (20, 20000.0);
         slider4.setTextValueSuffix (" Hz");
+        slider4.setSliderStyle(Slider::Rotary);
+        slider4.setTextBoxStyle (Slider::TextBoxBelow, false, 100, 20);
         slider4.addListener (this);
         addAndMakeVisible (slider4Label);
         slider4Label.setText ("Slider4", dontSendNotification);
         slider4Label.setColour(slider4Label.textColourId, Colours::white);
-        slider4Label.attachToComponent (&slider4, true);
+        //slider4Label.attachToComponent (&slider4, false);
     
+        // Slider5
+        addAndMakeVisible (slider5);
+        slider5.setRange (20, 20000.0);
+        slider5.setTextValueSuffix (" Hz");
+        slider5.setSliderStyle(Slider::Rotary);
+        slider5.setTextBoxStyle (Slider::TextBoxBelow, false, 100, 20);
+        slider5.addListener (this);
+        addAndMakeVisible (slider5Label);
+        slider5Label.setText ("Slider5", dontSendNotification);
+        slider5Label.setColour(slider5Label.textColourId, Colours::white);
+     
+        // Slider6
+        addAndMakeVisible (slider6);
+        slider6.setRange (20, 20000.0);
+        slider6.setTextValueSuffix (" Hz");
+        slider6.setSliderStyle(Slider::Rotary);
+        slider6.setTextBoxStyle (Slider::TextBoxBelow, false, 100, 20);
+        slider6.addListener (this);
+        addAndMakeVisible (slider6Label);
+        slider6Label.setText ("Slider6", dontSendNotification);
+        slider6Label.setColour(slider6Label.textColourId, Colours::white);
+        
         // Record Button
+        recordButton.setButtonText(buttonText);
+        recordButton.setColour(1, buttonUp);
+        recordButton.setColour(2, buttonDown);
         addAndMakeVisible(recordButton);
         
+        titleLabel.setText("MIDIBinz", dontSendNotification);
+        Font textFont;
+        textFont.setTypefaceName("BrushScript");
+        textFont.setBold(true);
+        textFont.setUnderline(true);
+        textFont.setHeight(50);
+        titleLabel.setFont(textFont);
+        titleLabel.setColour(titleLabel.textColourId, Colour(0xff2ca1ff));
+        addAndMakeVisible(titleLabel);
     }
 
     ~MainContentComponent()
@@ -206,14 +255,17 @@ public:
         // (to prevent the output of random noise)
         AudioIODevice* device = deviceManager.getCurrentAudioDevice();
         const BigInteger activeInputChannels = device->getActiveInputChannels();
-
-                if (bufferToFill.buffer->getNumChannels() > 0)
+        recording = false;
+        if (recordButton.getState() == Button::buttonDown)
         {
-            const float* channelData = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
-             
-            for (int i = 0; i < bufferToFill.numSamples; ++i)
+            if (bufferToFill.buffer->getNumChannels() > 0)
             {
-                pushNextSampleIntoFifo (channelData[i]);
+                const float* channelData = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
+             
+                for (int i = 0; i < bufferToFill.numSamples; ++i)
+                {
+                    pushNextSampleIntoFifo (channelData[i]);
+                }
             }
         }
     }
@@ -262,10 +314,19 @@ public:
     void paint (Graphics& g) override
     {
         // (Our component is opaque, so we must completely fill the background with a solid colour)
-        g.fillAll (Colour (0xffa9a9a9));
+        g.fillAll (Colour (0xff48494a));
 
 
         // You can add your drawing code here!
+        if (recordButton.getState() == Button::buttonDown)
+        {
+            buttonText = "Recording.....";
+        }
+        else
+        {
+            buttonText = "Hold To Record";
+        }
+        recordButton.setButtonText(buttonText);
     }
 
     void resized() override
@@ -273,13 +334,27 @@ public:
         // This is called when the MainContentComponent is resized.
         // If you add any child components, this is where you should
         // update their positions.
-        const int sliderLeft = 60;
-        slider1.setBounds (sliderLeft, 200, width - sliderLeft - 10, 20);
-        slider2.setBounds (sliderLeft, 240, width - sliderLeft - 10, 20);
-        slider3.setBounds (sliderLeft, 280, width - sliderLeft - 10, 20);
-        slider4.setBounds (sliderLeft, 320, width - sliderLeft - 10, 20);
-        levelSlider.setBounds(100, 40, 200, 200);
-        recordButton.setBounds(100, 450, width - 110, 20);
+        Rectangle<int> area = getLocalBounds();
+        const int sliderLeft = 15;
+        const int buttonSize = 90;
+        const int buttonRow = 130;
+        slider1.setBounds (sliderLeft, buttonRow, buttonSize, buttonSize);
+        slider2.setBounds (sliderLeft + 100, buttonRow, buttonSize, buttonSize);
+        slider3.setBounds (sliderLeft+200, buttonRow, buttonSize, buttonSize);
+        slider4.setBounds (sliderLeft, buttonRow+130, buttonSize, buttonSize);
+        slider5.setBounds (sliderLeft+100, buttonRow+130, buttonSize, buttonSize);
+        slider6.setBounds (sliderLeft+200, buttonRow+130, buttonSize, buttonSize);
+        levelSlider.setBounds(20, 415, 280, buttonSize-75);
+        recordButton.setBounds(5, 470, 310, 110);
+        
+        slider1Label.setBounds(sliderLeft+20, buttonRow-15, 50, 15);
+        slider2Label.setBounds(sliderLeft+120, buttonRow-15, 50, 15);
+        slider3Label.setBounds(sliderLeft+220, buttonRow-15, 50, 15);
+        slider4Label.setBounds(sliderLeft+20, buttonRow+115, 50, 15);
+        slider5Label.setBounds(sliderLeft+120, buttonRow+115, 50, 15);
+        slider6Label.setBounds(sliderLeft+220, buttonRow+115, 50, 15);
+        
+        titleLabel.setBounds(50,5,300, 100);
         
         
     }
@@ -290,6 +365,7 @@ public:
     {
         
     }
+    
     enum
     {
         fftOrder = 10,
@@ -309,6 +385,7 @@ private:
     bool nextFFTBlockReady;
     float audioOutput = 0.0;
     
+    bool recording;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
     int width = 320;
     int height = 600;
@@ -320,11 +397,19 @@ private:
     Label slider3Label;
     Slider slider4;
     Label slider4Label;
+    Slider slider5;
+    Label slider5Label;
+    Slider slider6;
+    Label slider6Label;
     Random random;
     Slider levelSlider;
     Label levelLabel;
     TextButton recordButton;
-    LookAndFeel_V3 otherLookAndFeel;
+    AltLookAndFeel altLookAndFeel;
+    String buttonText;
+    Colour buttonUp;
+    Colour buttonDown;
+    Label titleLabel;
     
 };
 
