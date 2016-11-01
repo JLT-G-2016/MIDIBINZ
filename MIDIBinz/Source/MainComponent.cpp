@@ -10,7 +10,7 @@
 #define MAINCOMPONENT_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-
+#include "Filter.h"
 
 class AltLookAndFeel : public LookAndFeel_V3
 {
@@ -114,9 +114,9 @@ public:
 class MainContentComponent   : public AudioAppComponent, 
                                public Slider::Listener,
                                public ButtonListener,
-                               private Timer,
-                               private MidiInputCalback,
-                               private MessengerListener
+                               private Timer
+                               //private MidiInputCalback,
+                               //private MessengerListener
 {
 public:
     //==============================================================================
@@ -142,7 +142,7 @@ public:
         
         
         // specify the number of input and output channels that we want to open
-        setAudioChannels (2, 0);
+        setAudioChannels (2, 2);
         startTimerHz (60);
         
         //Slider1 
@@ -287,7 +287,8 @@ public:
     {
         if (nextFFTBlockReady)
         {
-            printFFT();
+            //printFFT();
+            
             nextFFTBlockReady = false;
             repaint();
         }
@@ -300,6 +301,22 @@ public:
         {
             if (! nextFFTBlockReady)
             {
+                //filter 1024 sample block
+                float * it = new float[sizeof(fifo)]; // iterator to feed sample values into filter
+                // it is iterator that points to fifo samples
+                it = fifo;
+                
+                // iterate through 1024 fifo samples, filter, and set to filterArray
+                for(size_t i = 0; i < sizeof(fifo); i++)
+                {
+                    // filter(it)
+                    // Gets filtered sample
+                    filtSample = myFilter->do_sample(*it);
+                    it++;
+                    // Fill array with filtered samples
+                    filterArray[i] = &filtSample;
+                }
+                
                 zeromem (fftData, sizeof (fftData));
                 memcpy (fftData, fifo, sizeof (fifo));
                 nextFFTBlockReady = true;
@@ -309,6 +326,7 @@ public:
         }
 
         fifo[fifoIndex++] = sample;
+        
     }
     void printFFT()
     {
@@ -393,10 +411,14 @@ private:
 
     // Your private member variables go here...
 
+    
+    Filter *myFilter = new Filter(BPF, 51, 44.1, 3.0, 6.0);
     FFT forwardFFT;
     String midiMsg;
     float fifo [fftSize];
+    float * filterArray [fftSize];
     float fftData [2 * fftSize];
+    float filtSample = 0;
     int fifoIndex;
     bool nextFFTBlockReady;
     float audioOutput = 0.0;
