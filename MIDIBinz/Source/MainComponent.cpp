@@ -114,7 +114,9 @@ public:
 class MainContentComponent   : public AudioAppComponent, 
                                public Slider::Listener,
                                public ButtonListener,
-                               private Timer
+                               private Timer,
+                               private MidiInputCalback,
+                               private MessengerListener
 {
 public:
     //==============================================================================
