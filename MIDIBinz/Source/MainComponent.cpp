@@ -120,6 +120,7 @@ public:
     //==============================================================================
     MainContentComponent() : forwardFFT (fftOrder, false)
     {
+        
         setSize (width, height);
         buttonUp = Colour (0xffe30000);
         buttonDown = Colour (0xff800000);
@@ -269,7 +270,17 @@ public:
             }
         }
     }
-    
+    // Takes Amp values
+    //
+    void ConvertToMidi(float* rawData)
+    {
+        int midiVal = (int)*rawData;
+        jmap(abs(midiVal*100),0,50,1,127);
+        MidiMessage msg = MidiMessage::controllerEvent(1, 20, midiVal);
+        midiMsg = msg.getDescription();
+        repaint();
+        
+    }
     void timerCallback() override
     {
         if (nextFFTBlockReady)
@@ -299,8 +310,10 @@ public:
     }
     void printFFT()
     {
-        forwardFFT.performFrequencyOnlyForwardTransform (fftData);
-        std::cout << *fftData << std::endl;
+        forwardFFT.performRealOnlyForwardTransform(fftData);
+        
+        ConvertToMidi(fftData);
+        std::cout << midiMsg << std::endl;
     }
     
     void releaseResources() override
@@ -327,6 +340,7 @@ public:
             buttonText = "Hold To Record";
         }
         recordButton.setButtonText(buttonText);
+        g.drawText(midiMsg,20, 40, 200, 800, true);
     }
 
     void resized() override
@@ -378,7 +392,7 @@ private:
     // Your private member variables go here...
 
     FFT forwardFFT;
-
+    String midiMsg;
     float fifo [fftSize];
     float fftData [2 * fftSize];
     int fifoIndex;
