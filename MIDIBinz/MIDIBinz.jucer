@@ -5,6 +5,8 @@
               jucerVersion="4.2.4">
   <MAINGROUP id="DT8RAF" name="MidiBinz">
     <GROUP id="{FBEA1978-1838-9DD4-5D9C-0628CE9CCE7A}" name="Source">
+      <FILE id="eep66y" name="Filter.cpp" compile="1" resource="0" file="Source/Filter.cpp"/>
+      <FILE id="pp3aop" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>
       <FILE id="NgkEmr" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
       <FILE id="T0FLrz" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
