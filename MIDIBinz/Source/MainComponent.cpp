@@ -265,13 +265,10 @@ public:
             {
                 const float* channelData = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
              
-                //for (int sample = 0; sample < bufferToFill.numSamples; ++sample)  //Process Filter Function                      
-                    //outBuffer[sample] = myFilter->do_sample(inBuffer[sample]);
                 
-                    
                 for (int i = 0; i < bufferToFill.numSamples; ++i)
                 {
-                    pushNextSampleIntoFifo (channelData[i]);
+                    pushNextSampleIntoFilter (channelData[i]);
                 }
             }
         }
@@ -289,49 +286,79 @@ public:
     }
     void timerCallback() override
     {
-        if (nextFFTBlockReady)
+        if (nextFFTBlockReady) // If bin is filled
         {
-            //printFFT();
+            // get max vals and clear filter bank arrays for refilling
+            unscaledAvg[0] = getAverageBinAmplitude(filtBank1);
+            zeromem(filtBank1, sizeof(filtBank1));
+            unscaledAvg[1] = getAverageBinAmplitude(filtBank2);
+            zeromem(filtBank2, sizeof(filtBank2));
+            unscaledAvg[2] = getAverageBinAmplitude(filtBank3);
+            zeromem(filtBank3, sizeof(filtBank3));
+            unscaledAvg[3] = getAverageBinAmplitude(filtBank4);
+            zeromem(filtBank4, sizeof(filtBank4));
             
+            // Set false to fill filter banks again
             nextFFTBlockReady = false;
             repaint();
+            for(int i = 0; i < 4; i++) {
+                printf("%f\n",unscaledAvg[i]);
+            }
         }
     }
-    void pushNextSampleIntoFifo (float sample) noexcept
+    
+    
+    void pushNextSampleIntoFilter (float sample) noexcept
     {
-        // if the fifo contains enough data, set a flag to say
-        // that the next line should now be rendered..
-        if (fifoIndex == fftSize)
+        //Process Filter Function & Fill Bank
+        if(fifoIndex == blockSize) // strictly comparitive statement
         {
-            if (! nextFFTBlockReady)
-            {
-                //filter 1024 sample block
-                float * it = new float[sizeof(fifo)]; // iterator to feed sample values into filter
-                // it is iterator that points to fifo samples
-                it = fifo;
-                
-                // iterate through 1024 fifo samples, filter, and set to filterArray
-                for(size_t i = 0; i < sizeof(fifo); i++)
-                {
-                    // filter(it)
-                    // Gets filtered sample
-                    filtSample = myFilter->do_sample(*it);
-                    it++;
-                    // Fill array with filtered samples
-                    filterArray[i] = &filtSample;
-                }
-                
-                zeromem (fftData, sizeof (fftData));
-                memcpy (fftData, fifo, sizeof (fifo));
-                nextFFTBlockReady = true;
-            }
-            
+            nextFFTBlockReady = true;
             fifoIndex = 0;
         }
-
-        fifo[fifoIndex++] = sample;
         
+        else
+        {
+            *filtBank1 += myFilter1->do_sample(sample);
+            *filtBank2 += myFilter2->do_sample(sample);
+            *filtBank3 += myFilter3->do_sample(sample);
+            *filtBank4 += myFilter4->do_sample(sample);
+            
+            fifoIndex++; // count to get size to process (1024 for now)
+        }
     }
+    
+    /* FUNCTION TO FIND AVERAGE OF EACH FILTER BIN */
+    // Return MAX to test
+    float getAverageBinAmplitude (float * bank)
+    {
+        // Temporary Test
+        // Get max of each array
+        // Must get average to avoid randomly loud spikes. Unless that's what you're going for, then cool for you. Bitch.
+        
+        return findMaximum(bank, sizeof(bank)); // return the max of Type array of size 1024 elements
+        // return *bank;
+    }
+    
+//    void pushNextSampleIntoFifo (float sample) noexcept
+//    {
+//        // if the fifo contains enough data, set a flag to say
+//        // that the next line should now be rendered..
+//        if (fifoIndex == fftSize)
+//        {
+//            if (! nextFFTBlockReady)
+//            {
+//                zeromem (fftData, sizeof (fftData));
+//                memcpy (fftData, fifo, sizeof (fifo));
+//                nextFFTBlockReady = true;
+//            }
+//            
+//            fifoIndex = 0;
+//        }
+//
+//        fifo[fifoIndex++] = sample;
+//        
+//    }
     void printFFT()
     {
         forwardFFT.performRealOnlyForwardTransform(fftData);
@@ -416,11 +443,23 @@ private:
     // Your private member variables go here...
 
     
-    Filter *myFilter = new Filter(BPF, 51, 44.1, 3.0, 6.0);
+    Filter *myFilter1 = new Filter(BPF, 51, 44.1, .05, .2);
+    Filter *myFilter2 = new Filter(BPF, 51, 44.1, .2, 1.0);
+    Filter *myFilter3 = new Filter(BPF, 51, 44.1, 1.0, 5.0);
+    Filter *myFilter4 = new Filter(BPF, 51, 44.1, 5.0, 12.0);
+    int numFreqBanks = 4;
+    static const int blockSize = 1024;
+    float unscaledAvg[blockSize];
+    
     FFT forwardFFT;
     String midiMsg;
     float fifo [fftSize];
-    float * filterArray [fftSize];
+    //Banks to fold Freq Data
+    float filtBank1 [fftSize];
+    float filtBank2 [fftSize];
+    float filtBank3 [fftSize];
+    float filtBank4 [fftSize];
+    
     float fftData [2 * fftSize];
     float filtSample = 0;
     int fifoIndex;
