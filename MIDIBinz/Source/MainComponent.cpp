@@ -10,7 +10,7 @@
 #define MAINCOMPONENT_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Filter.h"
+#include "Filter.h" //Check
 
 class AltLookAndFeel : public LookAndFeel_V3
 {
