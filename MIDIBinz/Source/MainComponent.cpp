@@ -265,6 +265,10 @@ public:
             {
                 const float* channelData = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
              
+                //for (int sample = 0; sample < bufferToFill.numSamples; ++sample)  //Process Filter Function                      
+                    //outBuffer[sample] = myFilter->do_sample(inBuffer[sample]);
+                
+                    
                 for (int i = 0; i < bufferToFill.numSamples; ++i)
                 {
                     pushNextSampleIntoFifo (channelData[i]);
