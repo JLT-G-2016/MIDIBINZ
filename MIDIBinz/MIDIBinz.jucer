@@ -5,7 +5,8 @@
               jucerVersion="4.2.4">
   <MAINGROUP id="DT8RAF" name="MidiBinz">
     <GROUP id="{FBEA1978-1838-9DD4-5D9C-0628CE9CCE7A}" name="Source">
-      <FILE id="biGRRY" name="MidiListBox.h" compile="0" resource="0" file="Source/MidiListBox.h"/>
+      <FILE id="eep66y" name="Filter.cpp" compile="1" resource="0" file="Source/Filter.cpp"/>
+      <FILE id="pp3aop" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>
       <FILE id="NgkEmr" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
       <FILE id="T0FLrz" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
@@ -18,20 +19,20 @@
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MidiBinz"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../../../../Applications/JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../../../../Applications/JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../../../Applications/JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../../../Applications/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../../../Applications/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../../../Applications/JUCE/modules"/>
-        <MODULEPATH id="juce_cryptography" path="../../../../Applications/JUCE/modules"/>
-        <MODULEPATH id="juce_video" path="../../../../Applications/JUCE/modules"/>
-        <MODULEPATH id="juce_opengl" path="../../../../Applications/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../../../../Applications/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../../../Applications/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../../../Applications/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../../../Applications/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <XCODE_IPHONE targetFolder="Builds/iOS" iosScreenOrientation="portraitlandscape">
@@ -53,7 +54,7 @@
         <MODULEPATH id="juce_opengl" path="../../../../../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="../../../../../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_devices" path="../../../../../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_processors" path="../../../../../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_utils" path="../../../../../../JUCE/modules"/>
       </MODULEPATHS>
