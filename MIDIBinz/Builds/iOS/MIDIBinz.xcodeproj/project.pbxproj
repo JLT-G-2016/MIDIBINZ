@@ -478,6 +478,7 @@
 		5C15238D088062E38E64A8A1 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_TabbedButtonBar.cpp"; path = "../../../../../../JUCE/modules/juce_gui_basics/layout/juce_TabbedButtonBar.cpp"; sourceTree = "SOURCE_ROOT"; };
 		5C2A14E872272B4AB55CABDE = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_FilenameComponent.cpp"; path = "../../../../../../JUCE/modules/juce_gui_basics/filebrowser/juce_FilenameComponent.cpp"; sourceTree = "SOURCE_ROOT"; };
 		5C6A50F4F496AE5D489AFAC0 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_audio_processors.cpp"; path = "../../../../../../JUCE/modules/juce_audio_processors/juce_audio_processors.cpp"; sourceTree = "SOURCE_ROOT"; };
+		5CB22F7C1EAEACDB66F879D7 = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MidiListBox.h; path = ../../Source/MidiListBox.h; sourceTree = "SOURCE_ROOT"; };
 		5CD158A999AB3C6E561CF33B = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "juce_TimeSliceThread.h"; path = "../../../../../../JUCE/modules/juce_core/threads/juce_TimeSliceThread.h"; sourceTree = "SOURCE_ROOT"; };
 		5CF857D7DD1AAF0D93514CEF = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_RelativeRectangle.cpp"; path = "../../../../../../JUCE/modules/juce_gui_basics/positioning/juce_RelativeRectangle.cpp"; sourceTree = "SOURCE_ROOT"; };
 		5D142A6ED9AF63BDB9A41734 = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
@@ -1239,6 +1240,7 @@
 		FF8C42CC414A13E21BEBBA44 = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "juce_MP3AudioFormat.h"; path = "../../../../../../Applications/JUCE/modules/juce_audio_formats/codecs/juce_MP3AudioFormat.h"; sourceTree = "SOURCE_ROOT"; };
 		FFE0E447E1484A1ACE47A9AF = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_ApplicationCommandManager.cpp"; path = "../../../../../../JUCE/modules/juce_gui_basics/commands/juce_ApplicationCommandManager.cpp"; sourceTree = "SOURCE_ROOT"; };
 		E2ACDEDB5F73C7D84ACA6908 = {isa = PBXGroup; children = (
+					5CB22F7C1EAEACDB66F879D7,
 					DE01FC3D65B23E7B0E435BC0,
 					7E1F2839C6E492451D77F65D, ); name = Source; sourceTree = "<group>"; };
 		92963121AA97B5B4ABC4CEBE = {isa = PBXGroup; children = (

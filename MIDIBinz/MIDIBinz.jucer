@@ -5,6 +5,7 @@
               jucerVersion="4.2.4">
   <MAINGROUP id="DT8RAF" name="MidiBinz">
     <GROUP id="{FBEA1978-1838-9DD4-5D9C-0628CE9CCE7A}" name="Source">
+      <FILE id="biGRRY" name="MidiListBox.h" compile="0" resource="0" file="Source/MidiListBox.h"/>
       <FILE id="NgkEmr" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
       <FILE id="T0FLrz" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>

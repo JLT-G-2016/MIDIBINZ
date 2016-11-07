@@ -10,14 +10,33 @@
 #define MAINCOMPONENT_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+//#include "MidiListBox.h"
+struct MidiDeviceListEntry : ReferenceCountedObject
+{
+    MidiDeviceListEntry (const String& deviceName) : name (deviceName) {}
+    
+    String name;
+    ScopedPointer<MidiInput> inDevice;
+    ScopedPointer<MidiOutput> outDevice;
+    
+    typedef ReferenceCountedObjectPtr<MidiDeviceListEntry> Ptr;
+};
 
-
+//==============================================================================
+struct MidiCallbackMessage : public Message
+{
+    MidiCallbackMessage (const MidiMessage& msg) : message (msg) {}
+    MidiMessage message;
+};
+class MidiDeviceListBox;
+class MainContentComponent;
 class AltLookAndFeel : public LookAndFeel_V3
 {
 public:
     AltLookAndFeel()
     {
         setColour (Slider::rotarySliderFillColourId, Colours::red);
+        //setColour(TextButton::buttonColourId, Colours::blue);
     }
     
     void drawRotarySlider (Graphics& g, int x, int y, int width, int height, float sliderPos,
@@ -50,10 +69,11 @@ public:
         g.fillPath (p);
     }
     
-    
+    /*
     void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
                                bool isMouseOverButton, bool isButtonDown) override
     {
+        
         Rectangle<int> buttonArea = button.getLocalBounds();
         const int edge = 4;
         
@@ -74,10 +94,21 @@ public:
             g.setColour (Colour(0xffbe0000));
             g.fillRect (buttonArea);
         }
+         
     }
-    
+    */
     void drawButtonText (Graphics& g, TextButton& button, bool isMouseOverButton, bool isButtonDown) override
     {
+        if(button.getName() == "Record")
+        {
+            button.setColour(TextButton::buttonColourId , Colour(0xfffd0000));
+            button.setColour(TextButton::textColourOffId, Colours::white);
+        }
+        if(button.getName() == "Connect")
+        {
+            button.setColour(TextButton::buttonColourId , Colour(0xff0087ff));
+            button.setColour(TextButton::textColourOffId, Colours::white);
+        }
         Font font (getTextButtonFont (button, button.getHeight()));
         g.setFont (font);
         g.setColour (button.findColour (button.getToggleState() ? TextButton::textColourOnId
@@ -99,10 +130,14 @@ public:
             g.drawFittedText (button.getButtonText(),
                               leftIndent + offset, yIndent + offset, textWidth, button.getHeight() - yIndent * 2 - edge,
                               Justification::centred, 2);
+         
     }
+    
+     
     
     
 };
+
 
 
 
@@ -115,18 +150,24 @@ class MainContentComponent   : public AudioAppComponent,
                                public Slider::Listener,
                                public ButtonListener,
                                private Timer,
-                               private MidiInputCalback,
-                               private MessengerListener
+                               private MidiInputCallback,
+                               private MessageListener
 {
 public:
     //==============================================================================
-    MainContentComponent() : forwardFFT (fftOrder, false)
+    MainContentComponent() : forwardFFT (fftOrder, false),
+                             midiInputLabel ("Midi Input Label", "MIDI Input:"),
+                             midiOutputLabel ("Midi Output Label", "MIDI Output:")
+                             //midiInputSelector (new MidiDeviceListBox ("Midi Input Selector", *this, true)),
+                             //midiOutputSelector (new MidiDeviceListBox ("Midi Input Selector", *this, false))
+    
     {
         
         setSize (width, height);
         buttonUp = Colour (0xffe30000);
         buttonDown = Colour (0xff800000);
         buttonText = "Hold To Record";
+        
         setLookAndFeel (&altLookAndFeel);
         //Level Slider
         //levelSlider.setSliderStyle(Slider::Rotary);
@@ -139,6 +180,12 @@ public:
         levelLabel.attachToComponent(&levelSlider, false);
         addAndMakeVisible (levelSlider);
         addAndMakeVisible (levelLabel);
+        
+        
+        // Sidebar Prototyping
+        //sidebar.setColour(TextButton::buttonColourId, Colours::white);
+        //addAndMakeVisible(sidebar);
+        //addAndMakeVisible(sideItemA);
         
         
         // specify the number of input and output channels that we want to open
@@ -215,17 +262,23 @@ public:
         slider6Label.setColour(slider6Label.textColourId, Colours::white);
         
         // Record Button
+        recordButton.setName("Record");
         recordButton.setButtonText(buttonText);
-        recordButton.setColour(1, buttonUp);
-        recordButton.setColour(2, buttonDown);
         addAndMakeVisible(recordButton);
         
+        // Connect Button
+        connectButton.setName("Connect");
+        connectButton.setButtonText("Connect");
+        addAndMakeVisible(connectButton);
+        connectButton.addListener(this);
+        
+        // Title Label
         titleLabel.setText("MIDIBinz", dontSendNotification);
         Font textFont;
         textFont.setTypefaceName("BrushScript");
         textFont.setBold(true);
         textFont.setUnderline(true);
-        textFont.setHeight(50);
+        textFont.setHeight(30);
         titleLabel.setFont(textFont);
         titleLabel.setColour(titleLabel.textColourId, Colour(0xff2ca1ff));
         addAndMakeVisible(titleLabel);
@@ -315,6 +368,7 @@ public:
         forwardFFT.performRealOnlyForwardTransform(fftData);
         
         ConvertToMidi(fftData);
+        std::cout << recordButton.getName() << std::endl;
         std::cout << midiMsg << std::endl;
     }
     
@@ -342,7 +396,7 @@ public:
             buttonText = "Hold To Record";
         }
         recordButton.setButtonText(buttonText);
-        g.drawText(midiMsg,20, 40, 200, 800, true);
+        g.drawText(midiMsg,10, 40, 200, 860, true);
     }
 
     void resized() override
@@ -351,35 +405,155 @@ public:
         // If you add any child components, this is where you should
         // update their positions.
         Rectangle<int> area = getLocalBounds();
+        
+       
         const int sliderLeft = 15;
         const int buttonSize = 90;
         const int buttonRow = 130;
-        slider1.setBounds (sliderLeft, buttonRow, buttonSize, buttonSize);
-        slider2.setBounds (sliderLeft + 100, buttonRow, buttonSize, buttonSize);
-        slider3.setBounds (sliderLeft+200, buttonRow, buttonSize, buttonSize);
-        slider4.setBounds (sliderLeft, buttonRow+130, buttonSize, buttonSize);
-        slider5.setBounds (sliderLeft+100, buttonRow+130, buttonSize, buttonSize);
-        slider6.setBounds (sliderLeft+200, buttonRow+130, buttonSize, buttonSize);
-        levelSlider.setBounds(20, 415, 280, buttonSize-75);
-        recordButton.setBounds(5, 470, 310, 110);
+        slider1.setBounds (sliderLeft-10, buttonRow-10, buttonSize, buttonSize);
+        slider2.setBounds (sliderLeft + 100, buttonRow-60, buttonSize, buttonSize);
+        slider3.setBounds (sliderLeft+210, buttonRow-10, buttonSize, buttonSize);
+        slider4.setBounds (sliderLeft-10, buttonRow+140, buttonSize, buttonSize);
+        slider5.setBounds (sliderLeft+100, buttonRow+180, buttonSize, buttonSize);
+        slider6.setBounds (sliderLeft+210, buttonRow+140, buttonSize, buttonSize);
+        levelSlider.setBounds(20, 438, 280, buttonSize-75);
+        recordButton.setBounds(5, 485, 310, 110);
         
-        slider1Label.setBounds(sliderLeft+20, buttonRow-15, 50, 15);
-        slider2Label.setBounds(sliderLeft+120, buttonRow-15, 50, 15);
-        slider3Label.setBounds(sliderLeft+220, buttonRow-15, 50, 15);
-        slider4Label.setBounds(sliderLeft+20, buttonRow+115, 50, 15);
-        slider5Label.setBounds(sliderLeft+120, buttonRow+115, 50, 15);
-        slider6Label.setBounds(sliderLeft+220, buttonRow+115, 50, 15);
+        slider1Label.setBounds(sliderLeft+10, buttonRow-25, 50, 15);
+        slider2Label.setBounds(sliderLeft+120, buttonRow-75, 50, 15);
+        slider3Label.setBounds(sliderLeft+230, buttonRow-25, 50, 15);
+        slider4Label.setBounds(sliderLeft+10, buttonRow+125, 50, 15);
+        slider5Label.setBounds(sliderLeft+120, buttonRow+165, 50, 15);
+        slider6Label.setBounds(sliderLeft+230, buttonRow+125, 50, 15);
         
-        titleLabel.setBounds(50,5,300, 100);
+        titleLabel.setBounds(95,-20,300, 100);
+        connectButton.setBounds(122, 190, 80, 80);
         
         
     }
     void sliderValueChanged (Slider* slider) override
     {
     }
+    
+    
+    void sendToOutputs(const MidiMessage& msg)
+    {
+        for (int i = 0; i < midiOutputs.size(); ++i)
+            if (midiOutputs[i]->outDevice != nullptr)
+                midiOutputs[i]->outDevice->sendMessageNow (msg);
+        
+        const String mesg = (String) *msg.getRawData();
+        //myMsg = msg.getDescription();
+        
+        repaint();
+        
+    }
+    
+    //==============================================================================
+    void handleIncomingMidiMessage (MidiInput* /*source*/, const MidiMessage &message) override
+    {
+        // This is called on the MIDI thread
+        
+        if (message.isNoteOnOrOff())
+            postMessage (new MidiCallbackMessage (message));
+    }
+    
+    //==============================================================================
+    void handleMessage (const Message& msg) override
+    {
+        // This is called on the message loop
+        
+        const MidiMessage& mm = dynamic_cast<const MidiCallbackMessage&> (msg).message;
+        String midiString;
+        midiString << (mm.isNoteOn() ? String ("Note on: ") : String ("Note off: "));
+        midiString << (MidiMessage::getMidiNoteName (mm.getNoteNumber(), true, true, true));
+        midiString << (String (" vel = "));
+        midiString << static_cast<int>(mm.getVelocity());
+        midiString << "\n";
+        
+        //midiMonitor.insertTextAtCaret (midiString);
+    }
+    
+    
+    int getNumMidiInputs() const noexcept
+    {
+        return midiInputs.size();
+    }
+    ReferenceCountedObjectPtr<MidiDeviceListEntry> getMidiDevice (int index, bool isInput) const noexcept
+    {
+        return isInput ? midiInputs[index] : midiOutputs[index];
+    }
+    
+    //==============================================================================
+    int getNumMidiOutputs() const noexcept
+    {
+        return midiOutputs.size();
+    }
+    void openDevice (bool isInput, int index)
+    {
+        if (isInput)
+        {
+            jassert (midiInputs[index]->inDevice == nullptr);
+            midiInputs[index]->inDevice = MidiInput::openDevice (index, this);
+            
+            if (midiInputs[index]->inDevice == nullptr)
+            {
+                DBG ("MainContentComponent::openDevice: open input device for index = " << index << " failed!" );
+                return;
+            }
+            
+            midiInputs[index]->inDevice->start();
+        }
+        else
+        {
+            jassert (midiOutputs[index]->outDevice == nullptr);
+            midiOutputs[index]->outDevice = MidiOutput::openDevice (index);
+            
+            if (midiOutputs[index]->outDevice == nullptr)
+                DBG ("MainContentComponent::openDevice: open output device for index = " << index << " failed!" );
+        }
+    }
+    
+    
+    void closeDevice (bool isInput, int index)
+    {
+        if (isInput)
+        {
+            jassert (midiInputs[index]->inDevice != nullptr);
+            midiInputs[index]->inDevice->stop();
+            midiInputs[index]->inDevice = nullptr;
+        }
+        else
+        {
+            jassert (midiOutputs[index]->outDevice != nullptr);
+            midiOutputs[index]->outDevice = nullptr;
+        }
+    }
+    
     void buttonClicked(Button* buttonThatWasClicked) override
     {
-        
+        //std::cout << buttonThatWasClicked->getName() << std::endl;
+        if(buttonThatWasClicked->getName() == "Connect")
+        {
+            slider1.setVisible(false);
+            slider1Label.setVisible(false);
+            slider2.setVisible(false);
+            slider2Label.setVisible(false);
+            slider3.setVisible(false);
+            slider3Label.setVisible(false);
+            slider4.setVisible(false);
+            slider4Label.setVisible(false);
+            slider5.setVisible(false);
+            slider5Label.setVisible(false);
+            slider6.setVisible(false);
+            slider6Label.setVisible(false);
+            recordButton.setVisible(false);
+            levelSlider.setVisible(false);
+            connectButton.setVisible(false);
+            
+            
+        }
+          
     }
     
     enum
@@ -421,13 +595,23 @@ private:
     Slider levelSlider;
     Label levelLabel;
     TextButton recordButton;
+    TextButton connectButton;
     AltLookAndFeel altLookAndFeel;
     String buttonText;
     Colour buttonUp;
     Colour buttonDown;
     Label titleLabel;
+    ReferenceCountedArray<MidiDeviceListEntry> midiInputs;
+    ReferenceCountedArray<MidiDeviceListEntry> midiOutputs;
+    Label midiInputLabel;
+    Label midiOutputLabel;
+    //ScopedPointer<MidiDeviceListBox> midiInputSelector;
+    //ScopedPointer<MidiDeviceListBox> midiOutputSelector;
+    
     
 };
+
+
 
 
 // (This function is called by the app startup code to create our main component)
