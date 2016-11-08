@@ -41,6 +41,8 @@ public:
         //setColour(TextButton::buttonColourId, Colours::blue);
     }
     
+    
+    
     void drawRotarySlider (Graphics& g, int x, int y, int width, int height, float sliderPos,
                            const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider) override
     {
@@ -106,7 +108,7 @@ public:
             button.setColour(TextButton::buttonColourId , Colour(0xfffd0000));
             button.setColour(TextButton::textColourOffId, Colours::white);
         }
-        if(button.getName() == "Connect")
+        if(button.getName() == "Connect" || button.getName() == "Done")
         {
             button.setColour(TextButton::buttonColourId , Colour(0xff0087ff));
             button.setColour(TextButton::textColourOffId, Colours::white);
@@ -163,7 +165,6 @@ public:
                              midiOutputLabel ("Midi Output Label", "MIDI Output:")
                              //midiInputSelector (new MidiDeviceListBox ("Midi Input Selector", *this, true)),
                              //midiOutputSelector (new MidiDeviceListBox ("Midi Input Selector", *this, false))
-    
     {
         
         setSize (width, height);
@@ -192,7 +193,7 @@ public:
         
         
         // specify the number of input and output channels that we want to open
-        setAudioChannels (2, 2);
+        setAudioChannels (2, 0);
         startTimerHz (60);
         
         //Slider1 
@@ -275,6 +276,13 @@ public:
         addAndMakeVisible(connectButton);
         connectButton.addListener(this);
         
+        // menu Close Button
+        doneButton.setName("Done");
+        doneButton.setButtonText("Done");
+        addAndMakeVisible(doneButton);
+        doneButton.addListener(this);
+        doneButton.setVisible(false);
+        
         // Title Label
         titleLabel.setText("MIDIBinz", dontSendNotification);
         Font textFont;
@@ -285,11 +293,27 @@ public:
         titleLabel.setFont(textFont);
         titleLabel.setColour(titleLabel.textColourId, Colour(0xff2ca1ff));
         addAndMakeVisible(titleLabel);
+        
+        // MIDI Message
+        prototypeMIDIMessage.setText("Test", dontSendNotification);
+        addAndMakeVisible(prototypeMIDIMessage);
+        
+        // MIDI Listbox
+        //SparseSet<int> selections;
+        //selections.ad
+        addAndMakeVisible(MidiOutputListBox);
+        listBoxTitle.setText("MIDI Outputs", dontSendNotification );
+        listBoxTitle.setColour(Label::textColourId, Colours::white);
+        addAndMakeVisible(listBoxTitle);
+        MidiOutputListBox.setVisible(false);
+        listBoxTitle.setVisible(false);
     }
 
     ~MainContentComponent()
     {
         shutdownAudio();
+        midiInputs.clear();
+        midiOutputs.clear();
     }
 
     //==============================================================================
@@ -333,7 +357,7 @@ public:
     //
     void ConvertToMidi(float* rawData)
     {
-        int midiVal = (int)*rawData;
+        int midiVal = (int)100*(*rawData);
         jmap(abs(midiVal*100),0,50,1,127);
         MidiMessage msg = MidiMessage::controllerEvent(1, 20, midiVal);
         midiMsg = msg.getDescription();
@@ -356,10 +380,11 @@ public:
             
             // Set false to fill filter banks again
             nextFFTBlockReady = false;
-            repaint();
-            for(int i = 0; i < 4; i++) {
-                printf("%f\n",unscaledAvg[i]);
-            }
+            //for(int i = 0; i < 4; i++) {
+            //    printf("%f\n",unscaledAvg[i]);
+            //}
+            ConvertToMidi(unscaledAvg);
+            std::cout << midiMsg << std::endl;
         }
     }
     
@@ -442,13 +467,16 @@ public:
         if (recordButton.getState() == Button::buttonDown)
         {
             buttonText = "Recording.....";
+            prototypeMIDIMessage.setText(midiMsg, dontSendNotification);
         }
         else
         {
             buttonText = "Hold To Record";
+            prototypeMIDIMessage.setText("", dontSendNotification);
         }
         recordButton.setButtonText(buttonText);
-        g.drawText(midiMsg,10, 40, 200, 860, true);
+        //g.drawText(midiMsg,10, 40, 200, 860, true);
+        
     }
 
     void resized() override
@@ -468,7 +496,7 @@ public:
         slider4.setBounds (sliderLeft-10, buttonRow+140, buttonSize, buttonSize);
         slider5.setBounds (sliderLeft+100, buttonRow+180, buttonSize, buttonSize);
         slider6.setBounds (sliderLeft+210, buttonRow+140, buttonSize, buttonSize);
-        levelSlider.setBounds(20, 438, 280, buttonSize-75);
+        levelSlider.setBounds(20, 442, 280, buttonSize-75);
         recordButton.setBounds(5, 485, 310, 110);
         
         slider1Label.setBounds(sliderLeft+10, buttonRow-25, 50, 15);
@@ -478,8 +506,12 @@ public:
         slider5Label.setBounds(sliderLeft+120, buttonRow+165, 50, 15);
         slider6Label.setBounds(sliderLeft+230, buttonRow+125, 50, 15);
         
-        titleLabel.setBounds(95,-20,300, 100);
-        connectButton.setBounds(122, 190, 80, 80);
+        titleLabel.setBounds(95,-13,300, 70);
+        connectButton.setBounds(120, 190, 80, 80);
+        doneButton.setBounds(250, 540, 60, 40);
+        prototypeMIDIMessage.setBounds(5, 465, 200, 15);
+        MidiOutputListBox.setBounds(35, 100, 250, 400);
+        listBoxTitle.setBounds(30, 60, 90, 40);
         
         
     }
@@ -581,7 +613,85 @@ public:
             midiOutputs[index]->outDevice = nullptr;
         }
     }
-    
+    void closeUnpluggedDevices (StringArray& currentlyPluggedInDevices, bool isInputDevice)
+    {
+        ReferenceCountedArray<MidiDeviceListEntry>& midiDevices = isInputDevice ? midiInputs
+        : midiOutputs;
+        
+        for (int i = midiDevices.size(); --i >= 0;)
+        {
+            MidiDeviceListEntry& d = *midiDevices[i];
+            
+            if (! currentlyPluggedInDevices.contains (d.name))
+            {
+                if (isInputDevice ? d.inDevice != nullptr
+                    : d.outDevice != nullptr)
+                    closeDevice (isInputDevice, i);
+                
+                midiDevices.remove (i);
+            }
+        }
+    }
+    bool hasDeviceListChanged (const StringArray& deviceNames, bool isInputDevice)
+    {
+        ReferenceCountedArray<MidiDeviceListEntry>& midiDevices = isInputDevice ? midiInputs
+        : midiOutputs;
+        
+        if (deviceNames.size() != midiDevices.size())
+            return true;
+        
+        for (int i = 0; i < deviceNames.size(); ++i)
+            if (deviceNames[i] != midiDevices[i]->name)
+                return true;
+        
+        return false;
+    }
+    MidiDeviceListEntry::Ptr findDeviceWithName (const String& name, bool isInputDevice) const
+    {
+        const ReferenceCountedArray<MidiDeviceListEntry>& midiDevices = isInputDevice ? midiInputs
+        : midiOutputs;
+        
+        for (int i = 0; i < midiDevices.size(); ++i)
+            if (midiDevices[i]->name == name)
+                return midiDevices[i];
+        
+        return nullptr;
+    }
+    void updateDeviceList (bool isInputDeviceList)
+    {
+        StringArray newDeviceNames = isInputDeviceList ? MidiInput::getDevices()
+        : MidiOutput::getDevices();
+        
+        if (hasDeviceListChanged (newDeviceNames, isInputDeviceList))
+        {
+            
+            ReferenceCountedArray<MidiDeviceListEntry>& midiDevices
+            = isInputDeviceList ? midiInputs : midiOutputs;
+            
+            closeUnpluggedDevices (newDeviceNames, isInputDeviceList);
+            
+            ReferenceCountedArray<MidiDeviceListEntry> newDeviceList;
+            
+            // add all currently plugged-in devices to the device list
+            for (int i = 0; i < newDeviceNames.size(); ++i)
+            {
+                MidiDeviceListEntry::Ptr entry = findDeviceWithName (newDeviceNames[i], isInputDeviceList);
+                
+                if (entry == nullptr)
+                    entry = new MidiDeviceListEntry (newDeviceNames[i]);
+                
+                newDeviceList.add (entry);
+            }
+            
+            // actually update the device list
+            midiDevices = newDeviceList;
+            
+            //TODO
+            // update the selection status of the combo-box
+            //if (MidiDeviceListBox* midiSelector = isInputDeviceList ? midiInputSelector : midiOutputSelector)
+            //    midiSelector->syncSelectedItemsWithDeviceList (midiDevices);
+        }
+    }
     void buttonClicked(Button* buttonThatWasClicked) override
     {
         //std::cout << buttonThatWasClicked->getName() << std::endl;
@@ -602,10 +712,32 @@ public:
             recordButton.setVisible(false);
             levelSlider.setVisible(false);
             connectButton.setVisible(false);
-            
-            
+            doneButton.setVisible(true);
+            listBoxTitle.setVisible(true);
+            MidiOutputListBox.setVisible(true);
         }
-          
+        if(buttonThatWasClicked->getName() == "Done")
+        {
+            slider1.setVisible(true);
+            slider1Label.setVisible(true);
+            slider2.setVisible(true);
+            slider2Label.setVisible(true);
+            slider3.setVisible(true);
+            slider3Label.setVisible(true);
+            slider4.setVisible(true);
+            slider4Label.setVisible(true);
+            slider5.setVisible(true);
+            slider5Label.setVisible(true);
+            slider6.setVisible(true);
+            slider6Label.setVisible(true);
+            recordButton.setVisible(true);
+            levelSlider.setVisible(true);
+            connectButton.setVisible(true);
+            doneButton.setVisible(false);
+            listBoxTitle.setVisible(false);
+            MidiOutputListBox.setVisible(false);
+        }
+        
     }
     
     enum
@@ -673,6 +805,10 @@ private:
     ReferenceCountedArray<MidiDeviceListEntry> midiOutputs;
     Label midiInputLabel;
     Label midiOutputLabel;
+    TextButton doneButton;
+    Label prototypeMIDIMessage;
+    ListBox MidiOutputListBox;
+    Label listBoxTitle;
     //ScopedPointer<MidiDeviceListBox> midiInputSelector;
     //ScopedPointer<MidiDeviceListBox> midiOutputSelector;
     
