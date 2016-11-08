@@ -421,7 +421,7 @@ public:
             filtBank2[iter] = myFilter2->do_sample(sample);
             filtBank3[iter] = myFilter3->do_sample(sample);
             filtBank4[iter] = myFilter4->do_sample(sample);
-            
+            iter++;
             fifoIndex++; // count to get size to process (1024 for now)
         }
     }
