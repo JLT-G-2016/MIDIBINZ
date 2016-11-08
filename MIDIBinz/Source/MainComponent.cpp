@@ -284,15 +284,30 @@ public:
         doneButton.setVisible(false);
         
         // Title Label
-        titleLabel.setText("MIDIBinz", dontSendNotification);
+        titleLabel1.setText("MIDIBinz", dontSendNotification);
         Font textFont;
         textFont.setTypefaceName("BrushScript");
         textFont.setBold(true);
         textFont.setUnderline(true);
-        textFont.setHeight(30);
-        titleLabel.setFont(textFont);
-        titleLabel.setColour(titleLabel.textColourId, Colour(0xff2ca1ff));
-        addAndMakeVisible(titleLabel);
+        textFont.setHeight(17);
+        titleLabel1.setFont(textFont);
+        titleLabel1.setColour(titleLabel1.textColourId, Colour(0xff2ca1ff));
+        addAndMakeVisible(titleLabel1);
+        
+        // Project Group Title
+        projectGroupTitle1.setText("A JLT-G", dontSendNotification);
+        projectGroupTitle2.setText("Project", dontSendNotification);
+        Font textFont2;
+        textFont2.setTypefaceName("Connecticut");
+        textFont2.setBold(true);
+        textFont2.setUnderline(true);
+        textFont2.setHeight(15);
+        projectGroupTitle1.setFont(textFont2);
+        projectGroupTitle2.setFont(textFont2);
+        projectGroupTitle1.setColour(projectGroupTitle1.textColourId, Colour(0xff2ca1ff));
+        projectGroupTitle2.setColour(projectGroupTitle2.textColourId, Colour(0xff2ca1ff));
+        addAndMakeVisible(projectGroupTitle1);
+        addAndMakeVisible(projectGroupTitle2);
         
         // MIDI Message
         prototypeMIDIMessage.setText("Test", dontSendNotification);
@@ -396,14 +411,16 @@ public:
         {
             nextFFTBlockReady = true;
             fifoIndex = 0;
+            iter = 0;
         }
         
         else
         {
-            *filtBank1 += myFilter1->do_sample(sample);
-            *filtBank2 += myFilter2->do_sample(sample);
-            *filtBank3 += myFilter3->do_sample(sample);
-            *filtBank4 += myFilter4->do_sample(sample);
+            
+            filtBank1[iter] = myFilter1->do_sample(sample);
+            filtBank2[iter] = myFilter2->do_sample(sample);
+            filtBank3[iter] = myFilter3->do_sample(sample);
+            filtBank4[iter] = myFilter4->do_sample(sample);
             
             fifoIndex++; // count to get size to process (1024 for now)
         }
@@ -497,7 +514,7 @@ public:
         slider5.setBounds (sliderLeft+100, buttonRow+180, buttonSize, buttonSize);
         slider6.setBounds (sliderLeft+210, buttonRow+140, buttonSize, buttonSize);
         levelSlider.setBounds(20, 442, 280, buttonSize-75);
-        recordButton.setBounds(5, 485, 310, 110);
+        recordButton.setBounds(5, 485, 310, 95);
         
         slider1Label.setBounds(sliderLeft+10, buttonRow-25, 50, 15);
         slider2Label.setBounds(sliderLeft+120, buttonRow-75, 50, 15);
@@ -506,7 +523,9 @@ public:
         slider5Label.setBounds(sliderLeft+120, buttonRow+165, 50, 15);
         slider6Label.setBounds(sliderLeft+230, buttonRow+125, 50, 15);
         
-        titleLabel.setBounds(95,-13,300, 70);
+        titleLabel1.setBounds(5,0,300, 70);
+        projectGroupTitle1.setBounds(250, 0, 300, 70);
+        projectGroupTitle2.setBounds(250, 20, 300, 70);
         connectButton.setBounds(120, 190, 80, 80);
         doneButton.setBounds(250, 540, 60, 40);
         prototypeMIDIMessage.setBounds(5, 465, 200, 15);
@@ -779,6 +798,7 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
     int width = 320;
     int height = 600;
+    int iter;
     Slider slider1;
     Label slider1Label;
     Slider slider2;
@@ -800,7 +820,7 @@ private:
     String buttonText;
     Colour buttonUp;
     Colour buttonDown;
-    Label titleLabel;
+    Label titleLabel1;
     ReferenceCountedArray<MidiDeviceListEntry> midiInputs;
     ReferenceCountedArray<MidiDeviceListEntry> midiOutputs;
     Label midiInputLabel;
@@ -809,6 +829,8 @@ private:
     Label prototypeMIDIMessage;
     ListBox MidiOutputListBox;
     Label listBoxTitle;
+    Label projectGroupTitle1;
+    Label projectGroupTitle2;
     //ScopedPointer<MidiDeviceListBox> midiInputSelector;
     //ScopedPointer<MidiDeviceListBox> midiOutputSelector;
     
