@@ -67,35 +67,7 @@ AltLookAndFeel::AltLookAndFeel()
         g.setColour (Colours::darkblue);
         g.fillPath (p);
     }
-    
-    /*
-    void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
-                               bool isMouseOverButton, bool isButtonDown) override
-    {
-        
-        Rectangle<int> buttonArea = button.getLocalBounds();
-        const int edge = 4;
-        
-        buttonArea.removeFromLeft (edge);
-        buttonArea.removeFromTop (edge);
-        
-        // shadow
-        g.setColour (Colours::darkgrey.withAlpha (0.5f));
-        g.fillRect (buttonArea);
 
-        const int offset = isButtonDown ? -edge / 2 : -edge;
-        buttonArea.translate (offset, offset);
-        
-        g.setColour (Colour(0xfffd0000));
-        g.fillRect (buttonArea);
-        if (isButtonDown)
-        {
-            g.setColour (Colour(0xffbe0000));
-            g.fillRect (buttonArea);
-        }
-         
-    }
-    */
 void AltLookAndFeel::drawButtonText (Graphics& g, TextButton& button, bool isMouseOverButton, bool isButtonDown)
     {
         if(button.getName() == "Record")

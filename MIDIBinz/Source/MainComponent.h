@@ -38,14 +38,11 @@ class MainContentComponent : public AudioAppComponent,
 public:
     MainContentComponent();
     ~MainContentComponent();
-    
+    ////////////////////////
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate);
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill);
-    void ConvertToMidi(float* rawData);
     void timerCallback(); 
-    
     void pushNextSampleIntoFilter (float sample)noexcept;
-    
     float getAverageBinAmplitude (float * bank);
     void printFFT();
     void releaseResources(); 
@@ -53,11 +50,14 @@ public:
     void resized(); 
     void sliderValueChanged (Slider* slider); 
     void sendToOutputs(const MidiMessage& msg);
+    //MIDI
+    void ConvertToMidi(float* rawData);
     void handleIncomingMidiMessage (MidiInput* /*source*/, const MidiMessage &message); 
     void handleMessage (const Message& msg); 
     int getNumMidiInputs()const noexcept;
     ReferenceCountedObjectPtr<MidiDeviceListEntry> getMidiDevice (int index, bool isInput)const noexcept;
     int getNumMidiOutputs()const noexcept;
+    //iOS 
     void openDevice (bool isInput, int index);
     void closeDevice (bool isInput, int index);
     void closeUnpluggedDevices (StringArray& currentlyPluggedInDevices, bool isInputDevice);
@@ -74,14 +74,12 @@ public:
     
 private:
     //==============================================================================
-    
-    // Your private member variables go here...
-    
-    
+    //Create 4 Filter Instances calling 4 defined BandPassFilters
     Filter *myFilter1 = new Filter(BPF, 51, 44.1, .05, .2);
     Filter *myFilter2 = new Filter(BPF, 51, 44.1, .2, 1.0);
     Filter *myFilter3 = new Filter(BPF, 51, 44.1, 1.0, 5.0);
     Filter *myFilter4 = new Filter(BPF, 51, 44.1, 5.0, 12.0);
+    
     int numFreqBanks = 4;
     static const int blockSize = 1024;
     float unscaledAvg[blockSize];
@@ -106,6 +104,7 @@ private:
     int width = 320;
     int height = 600;
     int iter;
+    ///////////////////
     Slider slider1;
     Label slider1Label;
     Slider slider2;
