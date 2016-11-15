@@ -135,6 +135,102 @@ void AltLookAndFeel::drawButtonText (Graphics& g, TextButton& button, bool isMou
 
 
 
+class MidiDeviceListBox : public ListBox,
+private ListBoxModel
+{
+public:
+    //==============================================================================
+    MidiDeviceListBox (const String& name,
+                       MainContentComponent& contentComponent,
+                       bool isInputDeviceList)
+    : ListBox (name, this),
+      parent (contentComponent),
+      isInput (isInputDeviceList)
+    {
+        setOutlineThickness (1);
+        setMultipleSelectionEnabled (true);
+        setClickingTogglesRowSelection (true);
+    }
+
+    //==============================================================================
+    int getNumRows() override
+    {
+        return isInput ? parent.getNumMidiInputs()
+                       : parent.getNumMidiOutputs();
+    }
+
+    //==============================================================================
+    void paintListBoxItem (int rowNumber, Graphics &g,
+                           int width, int height, bool rowIsSelected) override
+    {
+        if (rowIsSelected)
+            g.fillAll (Colours::lightblue);
+        else if (rowNumber % 2)
+            g.fillAll (Colour (0xffeeeeee));
+
+
+        g.setColour (Colours::black);
+        g.setFont (height * 0.7f);
+
+        if (isInput)
+        {
+            if (rowNumber < parent.getNumMidiInputs())
+                g.drawText (parent.getMidiDevice (rowNumber, true)->name,
+                            5, 0, width, height,
+                            Justification::centredLeft, true);
+        }
+        else
+        {
+            if (rowNumber < parent.getNumMidiOutputs())
+                g.drawText (parent.getMidiDevice (rowNumber, false)->name,
+                            5, 0, width, height,
+                            Justification::centredLeft, true);
+        }
+    }
+
+    //==============================================================================
+    void selectedRowsChanged (int) override
+    {
+        SparseSet<int> newSelectedItems = getSelectedRows();
+        if (newSelectedItems != lastSelectedItems)
+        {
+            for (int i = 0; i < lastSelectedItems.size(); ++i)
+            {
+                if (! newSelectedItems.contains (lastSelectedItems[i]))
+                    parent.closeDevice (isInput, lastSelectedItems[i]);
+            }
+
+            for (int i = 0; i < newSelectedItems.size(); ++i)
+            {
+                if (! lastSelectedItems.contains (newSelectedItems[i]))
+                    parent.openDevice (isInput, newSelectedItems[i]);
+            }
+
+            lastSelectedItems = newSelectedItems;
+        }
+    }
+
+    //==============================================================================
+    void syncSelectedItemsWithDeviceList (const ReferenceCountedArray<MidiDeviceListEntry>& midiDevices)
+    {
+        SparseSet<int> selectedRows;
+        for (int i = 0; i < midiDevices.size(); ++i)
+            if (midiDevices[i]->inDevice != nullptr || midiDevices[i]->outDevice != nullptr)
+                selectedRows.addRange (Range<int> (i, i+1));
+
+        lastSelectedItems = selectedRows;
+        updateContent();
+        setSelectedRows (selectedRows, dontSendNotification);
+    }
+
+private:
+    //==============================================================================
+    MainContentComponent& parent;
+    bool isInput;
+    SparseSet<int> lastSelectedItems;
+    
+
+};
 
 //==============================================================================
 /*
@@ -145,9 +241,9 @@ void AltLookAndFeel::drawButtonText (Graphics& g, TextButton& button, bool isMou
     //==============================================================================
 MainContentComponent::MainContentComponent() : forwardFFT (fftOrder, false),
                              midiInputLabel ("Midi Input Label", "MIDI Input:"),
-                             midiOutputLabel ("Midi Output Label", "MIDI Output:")
+                             midiOutputLabel ("Midi Output Label", "MIDI Output:"),
                              //midiInputSelector (new MidiDeviceListBox ("Midi Input Selector", *this, true)),
-                             //midiOutputSelector (new MidiDeviceListBox ("Midi Input Selector", *this, false))
+                             midiOutputSelector (new MidiDeviceListBox ("Midi Output Selector", *this, false))
     {
         
         setSize (width, height);
@@ -299,12 +395,14 @@ MainContentComponent::MainContentComponent() : forwardFFT (fftOrder, false),
         // MIDI Listbox
         //SparseSet<int> selections;
         //selections.ad
-        addAndMakeVisible(MidiOutputListBox);
+        //addAndMakeVisible(MidiOutputListBox);
         listBoxTitle.setText("MIDI Outputs", dontSendNotification );
         listBoxTitle.setColour(Label::textColourId, Colours::white);
         addAndMakeVisible(listBoxTitle);
-        MidiOutputListBox.setVisible(false);
+        
         listBoxTitle.setVisible(false);
+        addAndMakeVisible (midiOutputSelector);
+        midiOutputSelector->setVisible(false);
     }
 
 MainContentComponent::~MainContentComponent()
@@ -359,11 +457,16 @@ MainContentComponent::~MainContentComponent()
         jmap(abs(midiVal*100),0,50,1,127);
         MidiMessage msg = MidiMessage::controllerEvent(1, 20, midiVal);
         midiMsg = msg.getDescription();
+        sendToOutputs(msg);
         repaint();
+        
         
     }
     void MainContentComponent::timerCallback()
     {
+   
+        updateDeviceList (true);
+        updateDeviceList (false);
         if (nextFFTBlockReady) // If bin is filled
         {
             // get max vals and clear filter bank arrays for refilling
@@ -513,6 +616,7 @@ MainContentComponent::~MainContentComponent()
         doneButton.setBounds(250, 540, 60, 40);
         prototypeMIDIMessage.setBounds(5, 465, 200, 15);
         MidiOutputListBox.setBounds(35, 100, 250, 400);
+        midiOutputSelector->setBounds(35, 100, 250, 400);
         listBoxTitle.setBounds(30, 60, 90, 40);
         
         
@@ -661,8 +765,7 @@ ReferenceCountedObjectPtr<MidiDeviceListEntry>  MainContentComponent::findDevice
     }
 void MainContentComponent::updateDeviceList (bool isInputDeviceList)
     {
-        StringArray newDeviceNames = isInputDeviceList ? MidiInput::getDevices()
-        : MidiOutput::getDevices();
+        StringArray newDeviceNames = MidiOutput::getDevices();
         
         if (hasDeviceListChanged (newDeviceNames, isInputDeviceList))
         {
@@ -690,8 +793,8 @@ void MainContentComponent::updateDeviceList (bool isInputDeviceList)
             
             //TODO
             // update the selection status of the combo-box
-            //if (MidiDeviceListBox* midiSelector = isInputDeviceList ? midiInputSelector : midiOutputSelector)
-            //    midiSelector->syncSelectedItemsWithDeviceList (midiDevices);
+            MidiDeviceListBox* midiSelector =  midiOutputSelector;
+            midiSelector->syncSelectedItemsWithDeviceList (midiDevices);
         }
     }
     void MainContentComponent::buttonClicked(Button* buttonThatWasClicked)
@@ -716,7 +819,7 @@ void MainContentComponent::updateDeviceList (bool isInputDeviceList)
             connectButton.setVisible(false);
             doneButton.setVisible(true);
             listBoxTitle.setVisible(true);
-            MidiOutputListBox.setVisible(true);
+            midiOutputSelector->setVisible(true);
         }
         if(buttonThatWasClicked->getName() == "Done")
         {
@@ -737,7 +840,7 @@ void MainContentComponent::updateDeviceList (bool isInputDeviceList)
             connectButton.setVisible(true);
             doneButton.setVisible(false);
             listBoxTitle.setVisible(false);
-            MidiOutputListBox.setVisible(false);
+            midiOutputSelector->setVisible(false);
         }
         
     }

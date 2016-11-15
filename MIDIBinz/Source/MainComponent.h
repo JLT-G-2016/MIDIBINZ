@@ -16,7 +16,7 @@
 
 struct MidiDeviceListEntry;
 struct MidiCallbackMessage;
-
+class MidiDeviceListBox;
 class AltLookAndFeel : public LookAndFeel_V3
 {
 public:
@@ -139,7 +139,7 @@ private:
     Label projectGroupTitle1;
     Label projectGroupTitle2;
     //ScopedPointer<MidiDeviceListBox> midiInputSelector;
-    //ScopedPointer<MidiDeviceListBox> midiOutputSelector;
+    ScopedPointer<MidiDeviceListBox> midiOutputSelector;
 };
 
 
