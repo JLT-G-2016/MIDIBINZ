@@ -6,11 +6,8 @@
   ==============================================================================
 */
 
-#ifndef MAINCOMPONENT_H_INCLUDED
-#define MAINCOMPONENT_H_INCLUDED
 
-#include "../JuceLibraryCode/JuceHeader.h"
-#include "Filter.h" //Check
+#include "MainComponent.h"
 
 struct MidiDeviceListEntry : ReferenceCountedObject
 {
@@ -32,10 +29,8 @@ struct MidiCallbackMessage : public Message
 class MidiDeviceListBox;
 class MainContentComponent;
 
-class AltLookAndFeel : public LookAndFeel_V3
-{
-public:
-    AltLookAndFeel()
+
+AltLookAndFeel::AltLookAndFeel()
     {
         setColour (Slider::rotarySliderFillColourId, Colours::red);
         //setColour(TextButton::buttonColourId, Colours::blue);
@@ -43,8 +38,8 @@ public:
     
     
     
-    void drawRotarySlider (Graphics& g, int x, int y, int width, int height, float sliderPos,
-                           const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider) override
+    void AltLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width, int height, float sliderPos,
+                           const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider)
     {
         const float radius = jmin (width / 2, height / 2) - 4.0f;
         const float centreX = x + width * 0.5f;
@@ -101,7 +96,7 @@ public:
          
     }
     */
-    void drawButtonText (Graphics& g, TextButton& button, bool isMouseOverButton, bool isButtonDown) override
+void AltLookAndFeel::drawButtonText (Graphics& g, TextButton& button, bool isMouseOverButton, bool isButtonDown)
     {
         if(button.getName() == "Record")
         {
@@ -136,11 +131,7 @@ public:
                               Justification::centred, 2);
          
     }
-    
-     
-    
-    
-};
+
 
 
 
@@ -150,17 +141,9 @@ public:
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainContentComponent   : public AudioAppComponent, 
-                               public Slider::Listener,
-                               public ButtonListener,
-                               private Timer,
-                               private MidiInputCallback,
-                               private MessageListener
 
-{
-public:
     //==============================================================================
-    MainContentComponent() : forwardFFT (fftOrder, false),
+MainContentComponent::MainContentComponent() : forwardFFT (fftOrder, false),
                              midiInputLabel ("Midi Input Label", "MIDI Input:"),
                              midiOutputLabel ("Midi Output Label", "MIDI Output:")
                              //midiInputSelector (new MidiDeviceListBox ("Midi Input Selector", *this, true)),
@@ -324,7 +307,7 @@ public:
         listBoxTitle.setVisible(false);
     }
 
-    ~MainContentComponent()
+MainContentComponent::~MainContentComponent()
     {
         shutdownAudio();
         midiInputs.clear();
@@ -332,7 +315,7 @@ public:
     }
 
     //==============================================================================
-    void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override
+    void MainContentComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
     {
         // This function will be called when the audio device is started, or when
         // its settings (i.e. sample rate, block size, etc) are changed.
@@ -343,7 +326,7 @@ public:
         // For more details, see the help for AudioProcessor::prepareToPlay()
     }
 
-    void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override
+    void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
     {
         // Your audio-processing code goes here!
 
@@ -370,7 +353,7 @@ public:
     }
     // Takes Amp values
     //
-    void ConvertToMidi(float* rawData)
+    void MainContentComponent::ConvertToMidi(float* rawData)
     {
         int midiVal = (int)100*(*rawData);
         jmap(abs(midiVal*100),0,50,1,127);
@@ -379,7 +362,7 @@ public:
         repaint();
         
     }
-    void timerCallback() override
+    void MainContentComponent::timerCallback()
     {
         if (nextFFTBlockReady) // If bin is filled
         {
@@ -404,7 +387,7 @@ public:
     }
     
     
-    void pushNextSampleIntoFilter (float sample) noexcept
+    void MainContentComponent::pushNextSampleIntoFilter (float sample)noexcept
     {
         //Process Filter Function & Fill Bank
         if(fifoIndex == blockSize) // strictly comparitive statement
@@ -428,7 +411,7 @@ public:
     
     /* FUNCTION TO FIND AVERAGE OF EACH FILTER BIN */
     // Return MAX to test
-    float getAverageBinAmplitude (float * bank)
+    float MainContentComponent::getAverageBinAmplitude (float * bank)
     {
         // Temporary Test
         // Get max of each array
@@ -457,7 +440,7 @@ public:
 //        fifo[fifoIndex++] = sample;
 //        
 //    }
-    void printFFT()
+    void MainContentComponent::printFFT()
     {
         forwardFFT.performRealOnlyForwardTransform(fftData);
         
@@ -466,7 +449,7 @@ public:
         std::cout << midiMsg << std::endl;
     }
     
-    void releaseResources() override
+    void MainContentComponent::releaseResources()
     {
         // This will be called when the audio device stops, or when it is being
         // restarted due to a setting change.
@@ -474,7 +457,7 @@ public:
         // For more details, see the help for AudioProcessor::releaseResources()
     }
     //==============================================================================
-    void paint (Graphics& g) override
+    void MainContentComponent::paint (Graphics& g)
     {
         // (Our component is opaque, so we must completely fill the background with a solid colour)
         g.fillAll (Colour (0xff48494a));
@@ -496,7 +479,7 @@ public:
         
     }
 
-    void resized() override
+    void MainContentComponent::resized()
     {
         // This is called when the MainContentComponent is resized.
         // If you add any child components, this is where you should
@@ -534,12 +517,12 @@ public:
         
         
     }
-    void sliderValueChanged (Slider* slider) override
+    void MainContentComponent::sliderValueChanged (Slider* slider)
     {
     }
     
     
-    void sendToOutputs(const MidiMessage& msg)
+    void MainContentComponent::sendToOutputs(const MidiMessage& msg)
     {
         for (int i = 0; i < midiOutputs.size(); ++i)
             if (midiOutputs[i]->outDevice != nullptr)
@@ -553,7 +536,7 @@ public:
     }
     
     //==============================================================================
-    void handleIncomingMidiMessage (MidiInput* /*source*/, const MidiMessage &message) override
+    void MainContentComponent::handleIncomingMidiMessage (MidiInput* /*source*/, const MidiMessage &message)
     {
         // This is called on the MIDI thread
         
@@ -562,7 +545,7 @@ public:
     }
     
     //==============================================================================
-    void handleMessage (const Message& msg) override
+    void MainContentComponent::handleMessage (const Message& msg)
     {
         // This is called on the message loop
         
@@ -578,21 +561,21 @@ public:
     }
     
     
-    int getNumMidiInputs() const noexcept
+    int MainContentComponent::getNumMidiInputs() const noexcept
     {
         return midiInputs.size();
     }
-    ReferenceCountedObjectPtr<MidiDeviceListEntry> getMidiDevice (int index, bool isInput) const noexcept
+    ReferenceCountedObjectPtr<MidiDeviceListEntry> MainContentComponent::getMidiDevice (int index, bool isInput) const noexcept
     {
         return isInput ? midiInputs[index] : midiOutputs[index];
     }
     
     //==============================================================================
-    int getNumMidiOutputs() const noexcept
+    int MainContentComponent::getNumMidiOutputs()const noexcept
     {
         return midiOutputs.size();
     }
-    void openDevice (bool isInput, int index)
+    void MainContentComponent::openDevice (bool isInput, int index)
     {
         if (isInput)
         {
@@ -618,7 +601,7 @@ public:
     }
     
     
-    void closeDevice (bool isInput, int index)
+    void MainContentComponent::closeDevice (bool isInput, int index)
     {
         if (isInput)
         {
@@ -632,7 +615,7 @@ public:
             midiOutputs[index]->outDevice = nullptr;
         }
     }
-    void closeUnpluggedDevices (StringArray& currentlyPluggedInDevices, bool isInputDevice)
+    void MainContentComponent::closeUnpluggedDevices (StringArray& currentlyPluggedInDevices, bool isInputDevice)
     {
         ReferenceCountedArray<MidiDeviceListEntry>& midiDevices = isInputDevice ? midiInputs
         : midiOutputs;
@@ -651,7 +634,7 @@ public:
             }
         }
     }
-    bool hasDeviceListChanged (const StringArray& deviceNames, bool isInputDevice)
+    bool MainContentComponent::hasDeviceListChanged (const StringArray& deviceNames, bool isInputDevice)
     {
         ReferenceCountedArray<MidiDeviceListEntry>& midiDevices = isInputDevice ? midiInputs
         : midiOutputs;
@@ -665,7 +648,7 @@ public:
         
         return false;
     }
-    MidiDeviceListEntry::Ptr findDeviceWithName (const String& name, bool isInputDevice) const
+ReferenceCountedObjectPtr<MidiDeviceListEntry>  MainContentComponent::findDeviceWithName (const String& name, bool isInputDevice) const
     {
         const ReferenceCountedArray<MidiDeviceListEntry>& midiDevices = isInputDevice ? midiInputs
         : midiOutputs;
@@ -676,7 +659,7 @@ public:
         
         return nullptr;
     }
-    void updateDeviceList (bool isInputDeviceList)
+void MainContentComponent::updateDeviceList (bool isInputDeviceList)
     {
         StringArray newDeviceNames = isInputDeviceList ? MidiInput::getDevices()
         : MidiOutput::getDevices();
@@ -711,7 +694,7 @@ public:
             //    midiSelector->syncSelectedItemsWithDeviceList (midiDevices);
         }
     }
-    void buttonClicked(Button* buttonThatWasClicked) override
+    void MainContentComponent::buttonClicked(Button* buttonThatWasClicked)
     {
         //std::cout << buttonThatWasClicked->getName() << std::endl;
         if(buttonThatWasClicked->getName() == "Connect")
@@ -758,84 +741,6 @@ public:
         }
         
     }
-    
-    enum
-    {
-        fftOrder = 10,
-        fftSize  = 1 << fftOrder
-    };
-
-private:
-    //==============================================================================
-
-    // Your private member variables go here...
-
-    
-    Filter *myFilter1 = new Filter(BPF, 51, 44.1, .05, .2);
-    Filter *myFilter2 = new Filter(BPF, 51, 44.1, .2, 1.0);
-    Filter *myFilter3 = new Filter(BPF, 51, 44.1, 1.0, 5.0);
-    Filter *myFilter4 = new Filter(BPF, 51, 44.1, 5.0, 12.0);
-    int numFreqBanks = 4;
-    static const int blockSize = 1024;
-    float unscaledAvg[blockSize];
-    
-    FFT forwardFFT;
-    String midiMsg;
-    float fifo [fftSize];
-    //Banks to fold Freq Data
-    float filtBank1 [fftSize];
-    float filtBank2 [fftSize];
-    float filtBank3 [fftSize];
-    float filtBank4 [fftSize];
-    
-    float fftData [2 * fftSize];
-    float filtSample = 0;
-    int fifoIndex;
-    bool nextFFTBlockReady;
-    float audioOutput = 0.0;
-    
-    bool recording;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
-    int width = 320;
-    int height = 600;
-    int iter;
-    Slider slider1;
-    Label slider1Label;
-    Slider slider2;
-    Label slider2Label;
-    Slider slider3;
-    Label slider3Label;
-    Slider slider4;
-    Label slider4Label;
-    Slider slider5;
-    Label slider5Label;
-    Slider slider6;
-    Label slider6Label;
-    Random random;
-    Slider levelSlider;
-    Label levelLabel;
-    TextButton recordButton;
-    TextButton connectButton;
-    AltLookAndFeel altLookAndFeel;
-    String buttonText;
-    Colour buttonUp;
-    Colour buttonDown;
-    Label titleLabel1;
-    ReferenceCountedArray<MidiDeviceListEntry> midiInputs;
-    ReferenceCountedArray<MidiDeviceListEntry> midiOutputs;
-    Label midiInputLabel;
-    Label midiOutputLabel;
-    TextButton doneButton;
-    Label prototypeMIDIMessage;
-    ListBox MidiOutputListBox;
-    Label listBoxTitle;
-    Label projectGroupTitle1;
-    Label projectGroupTitle2;
-    //ScopedPointer<MidiDeviceListBox> midiInputSelector;
-    //ScopedPointer<MidiDeviceListBox> midiOutputSelector;
-    
-    
-};
 
 
 
@@ -844,4 +749,3 @@ private:
 Component* createMainContentComponent()     { return new MainContentComponent(); }
 
 
-#endif  // MAINCOMPONENT_H_INCLUDED

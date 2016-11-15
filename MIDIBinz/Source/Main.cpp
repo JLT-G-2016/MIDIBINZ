@@ -9,6 +9,7 @@
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "MainComponent.h"
 
 Component* createMainContentComponent();
 
