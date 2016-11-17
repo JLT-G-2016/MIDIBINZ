@@ -19,7 +19,7 @@ struct MidiDeviceListEntry : ReferenceCountedObject
     
     typedef ReferenceCountedObjectPtr<MidiDeviceListEntry> Ptr;
 };
-
+//
 //==============================================================================
 struct MidiCallbackMessage : public Message
 {
@@ -106,7 +106,7 @@ void AltLookAndFeel::drawButtonText (Graphics& g, TextButton& button, bool isMou
 
 
 
-
+//TESTING
 
 //==============================================================================
 /*

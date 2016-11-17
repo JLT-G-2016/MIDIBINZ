@@ -87,7 +87,7 @@ private:
     FFT forwardFFT;
     String midiMsg;
     float fifo [fftSize];
-    //Banks to fold Freq Data
+    //Banks to hold Freq Data
     float filtBank1 [fftSize];
     float filtBank2 [fftSize];
     float filtBank3 [fftSize];
