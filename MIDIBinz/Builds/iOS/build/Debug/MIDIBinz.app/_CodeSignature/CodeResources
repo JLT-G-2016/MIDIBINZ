@@ -80,9 +80,13 @@
 		<data>
 		CJ20V8JzgMzZKF4HaoyMYfY6U1o=
 		</data>
+		<key>Assets.car</key>
+		<data>
+		CVxXvFYEvI/iXuabACJ/eI182zs=
+		</data>
 		<key>Info.plist</key>
 		<data>
-		Bb+gMnD7Zqq5VBVui6sSLFZ5XUc=
+		amRLtEOf156QLo72t+cfgohEC3Q=
 		</data>
 		<key>LaunchImage-700-568h@2x.png</key>
 		<data>
@@ -114,7 +118,7 @@
 		</data>
 		<key>embedded.mobileprovision</key>
 		<data>
-		dclRIbBZWGzMSifrGQDGnhyjuyA=
+		mrJcNtwm1KoT9+tXolZL36lM8Xo=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -328,6 +332,17 @@
 			Q0ZOEIuncfXvvTu5DbHZhlFRalolAh+x2S8CJYlhjq4=
 			</data>
 		</dict>
+		<key>Assets.car</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			CVxXvFYEvI/iXuabACJ/eI182zs=
+			</data>
+			<key>hash2</key>
+			<data>
+			HajkoglBwG6vhlIMVZBYuBXkVGUv3xUiPHOkCq8Ocqo=
+			</data>
+		</dict>
 		<key>LaunchImage-700-568h@2x.png</key>
 		<dict>
 			<key>hash</key>
@@ -398,11 +413,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			dclRIbBZWGzMSifrGQDGnhyjuyA=
+			mrJcNtwm1KoT9+tXolZL36lM8Xo=
 			</data>
 			<key>hash2</key>
 			<data>
-			b09wcdgmCxruvQV4+YmQeMj0SCdbpQRkkkA0txwV/0k=
+			dGZboV7fM1ah1pLVNaPpYxslWpo9dZQJ79C0rWIUfDw=
 			</data>
 		</dict>
 	</dict>
