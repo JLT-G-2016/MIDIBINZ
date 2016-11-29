@@ -21,9 +21,6 @@ class AltLookAndFeel : public LookAndFeel_V3
 {
 public:
     AltLookAndFeel();
-    
-    void drawRotarySlider (Graphics& g, int x, int y, int width, int height, float sliderPos,
-                           const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider) override;
     void drawButtonText (Graphics& g, TextButton& button, bool isMouseOverButton, bool isButtonDown) override;
     
 };
@@ -100,24 +97,21 @@ private:
     int fifoIndex;
     bool nextFFTBlockReady;
     float audioOutput = 0.0;
-    
+    bool bin1=false;
+    bool bin2=false;
+    bool bin3=false;
+    bool bin4=false;
     bool recording;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
     int width = 320;
     int height = 600;
     int iter;
-    Slider slider1;
-    Label slider1Label;
-    Slider slider2;
-    Label slider2Label;
-    Slider slider3;
-    Label slider3Label;
-    Slider slider4;
-    Label slider4Label;
-    Slider slider5;
-    Label slider5Label;
-    Slider slider6;
-    Label slider6Label;
+    
+    TextButton bin1Button;
+    TextButton bin2Button;
+    TextButton bin3Button;
+    TextButton bin4Button;
+    TextButton zeroMidi;
     Random random;
     Slider levelSlider;
     Label levelLabel;
@@ -130,15 +124,12 @@ private:
     Label titleLabel1;
     ReferenceCountedArray<MidiDeviceListEntry> midiInputs;
     ReferenceCountedArray<MidiDeviceListEntry> midiOutputs;
-    Label midiInputLabel;
     Label midiOutputLabel;
     TextButton doneButton;
     Label prototypeMIDIMessage;
     ListBox MidiOutputListBox;
     Label listBoxTitle;
     Label projectGroupTitle1;
-    Label projectGroupTitle2;
-    //ScopedPointer<MidiDeviceListBox> midiInputSelector;
     ScopedPointer<MidiDeviceListBox> midiOutputSelector;
 };
 

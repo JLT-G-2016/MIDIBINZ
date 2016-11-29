@@ -32,78 +32,18 @@ class MainContentComponent;
 
 AltLookAndFeel::AltLookAndFeel()
     {
-        setColour (Slider::rotarySliderFillColourId, Colours::red);
-        //setColour(TextButton::buttonColourId, Colours::blue);
+        
     }
-    
-    
-    
-    void AltLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width, int height, float sliderPos,
-                           const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider)
-    {
-        const float radius = jmin (width / 2, height / 2) - 4.0f;
-        const float centreX = x + width * 0.5f;
-        const float centreY = y + height * 0.5f;
-        const float rx = centreX - radius;
-        const float ry = centreY - radius;
-        const float rw = radius * 2.0f;
-        const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-        
-        // fill
-        g.setColour (Colours::royalblue);
-        g.fillEllipse (rx, ry, rw, rw);
-        
-        // outline
-        g.setColour (Colours::blue);
-        g.drawEllipse (rx, ry, rw, rw, 1.0f);
-        
-        Path p;
-        const float pointerLength = radius * 0.33f;
-        const float pointerThickness = 2.0f;
-        p.addRectangle (-pointerThickness * 0.5f, -radius, pointerThickness, pointerLength);
-        p.applyTransform (AffineTransform::rotation (angle).translated (centreX, centreY));
-        
-        // pointer
-        g.setColour (Colours::darkblue);
-        g.fillPath (p);
-    }
-    
-    /*
-    void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
-                               bool isMouseOverButton, bool isButtonDown) override
-    {
-        
-        Rectangle<int> buttonArea = button.getLocalBounds();
-        const int edge = 4;
-        
-        buttonArea.removeFromLeft (edge);
-        buttonArea.removeFromTop (edge);
-        
-        // shadow
-        g.setColour (Colours::darkgrey.withAlpha (0.5f));
-        g.fillRect (buttonArea);
-
-        const int offset = isButtonDown ? -edge / 2 : -edge;
-        buttonArea.translate (offset, offset);
-        
-        g.setColour (Colour(0xfffd0000));
-        g.fillRect (buttonArea);
-        if (isButtonDown)
-        {
-            g.setColour (Colour(0xffbe0000));
-            g.fillRect (buttonArea);
-        }
-         
-    }
-    */
-void AltLookAndFeel::drawButtonText (Graphics& g, TextButton& button, bool isMouseOverButton, bool isButtonDown)
+    void AltLookAndFeel::drawButtonText (Graphics& g, TextButton& button, bool isMouseOverButton, bool isButtonDown)
     {
         if(button.getName() == "Record")
         {
             button.setColour(TextButton::buttonColourId , Colour(0xfffd0000));
             button.setColour(TextButton::textColourOffId, Colours::white);
         }
-        if(button.getName() == "Connect" || button.getName() == "Done")
+        if(button.getName() == "Connect" || button.getName() == "Done" ||
+           button.getName() == "Bin1" || button.getName() == "Bin2" ||
+           button.getName() == "Bin3" || button.getName() == "Bin4")
         {
             button.setColour(TextButton::buttonColourId , Colour(0xff0087ff));
             button.setColour(TextButton::textColourOffId, Colours::white);
@@ -240,109 +180,62 @@ private:
 
     //==============================================================================
 MainContentComponent::MainContentComponent() : forwardFFT (fftOrder, false),
-                             midiInputLabel ("Midi Input Label", "MIDI Input:"),
                              midiOutputLabel ("Midi Output Label", "MIDI Output:"),
-                             //midiInputSelector (new MidiDeviceListBox ("Midi Input Selector", *this, true)),
                              midiOutputSelector (new MidiDeviceListBox ("Midi Output Selector", *this, false))
     {
         
         setSize (width, height);
-        buttonUp = Colour (0xffe30000);
-        buttonDown = Colour (0xff800000);
-        buttonText = "Hold To Record";
-        
+        buttonText = "Hold To Send MIDI";
         setLookAndFeel (&altLookAndFeel);
-        //Level Slider
-        //levelSlider.setSliderStyle(Slider::Rotary);
         
+        // Mic Level Slider
         levelSlider.setRange (0.0, 0.25);
         levelSlider.setValue(0.10);
         levelSlider.setTextBoxStyle (Slider::NoTextBox, false, 100, 20);
         levelLabel.setText ("Mic Level", dontSendNotification);
-        levelLabel.setColour(slider1Label.textColourId, Colours::white);
+        levelLabel.setColour(Label::textColourId, Colours::white);
         levelLabel.attachToComponent(&levelSlider, false);
         addAndMakeVisible (levelSlider);
         addAndMakeVisible (levelLabel);
-        
-        
-        // Sidebar Prototyping
-        //sidebar.setColour(TextButton::buttonColourId, Colours::white);
-        //addAndMakeVisible(sidebar);
-        //addAndMakeVisible(sideItemA);
-        
         
         // specify the number of input and output channels that we want to open
         setAudioChannels (2, 0);
         startTimerHz (60);
         
-        //Slider1 
-        addAndMakeVisible(slider1);
-        slider1.setRange(20, 20000.0);
-        slider1.setTextValueSuffix(" Hz");
-        slider1.setSliderStyle(Slider::Rotary);
-        slider1.setTextBoxStyle (Slider::TextBoxBelow, false, 100, 20);
-        slider1Label.setText("Slider1", dontSendNotification);
-        slider1Label.setColour(slider1Label.textColourId, Colours::white);
-        //slider1Label.attachToComponent(&slider1, false);
-        addAndMakeVisible(slider1Label);
-    
-        // Slider2 
-        addAndMakeVisible (slider2);
-        slider2.setRange (20, 20000.0);
-        slider2.setTextValueSuffix (" Hz");
-        slider2.setSliderStyle(Slider::Rotary);
-        slider2.setTextBoxStyle (Slider::TextBoxBelow, false, 100, 20);
-        slider2.addListener (this);
-        addAndMakeVisible (slider2Label);
-        slider2Label.setText ("Slider2", dontSendNotification);
-        slider2Label.setColour(slider2Label.textColourId, Colours::white);
-        //slider2Label.attachToComponent (&slider2, false);
-    
-        // Slider3
-        addAndMakeVisible (slider3);
-        slider3.setRange (20, 20000.0);
-        slider3.setTextValueSuffix (" Hz");
-        slider3.setSliderStyle(Slider::Rotary);
-        slider3.setTextBoxStyle (Slider::TextBoxBelow, false, 100, 20);
-        slider3.addListener (this);
-        addAndMakeVisible (slider3Label);
-        slider3Label.setText ("Slider3", dontSendNotification);
-        slider3Label.setColour(slider3Label.textColourId, Colours::white);
-        //slider3Label.attachToComponent (&slider3, false);
-    
-        // Slider4
-        addAndMakeVisible (slider4);
-        slider4.setRange (20, 20000.0);
-        slider4.setTextValueSuffix (" Hz");
-        slider4.setSliderStyle(Slider::Rotary);
-        slider4.setTextBoxStyle (Slider::TextBoxBelow, false, 100, 20);
-        slider4.addListener (this);
-        addAndMakeVisible (slider4Label);
-        slider4Label.setText ("Slider4", dontSendNotification);
-        slider4Label.setColour(slider4Label.textColourId, Colours::white);
-        //slider4Label.attachToComponent (&slider4, false);
-    
-        // Slider5
-        addAndMakeVisible (slider5);
-        slider5.setRange (20, 20000.0);
-        slider5.setTextValueSuffix (" Hz");
-        slider5.setSliderStyle(Slider::Rotary);
-        slider5.setTextBoxStyle (Slider::TextBoxBelow, false, 100, 20);
-        slider5.addListener (this);
-        addAndMakeVisible (slider5Label);
-        slider5Label.setText ("Slider5", dontSendNotification);
-        slider5Label.setColour(slider5Label.textColourId, Colours::white);
-     
-        // Slider6
-        addAndMakeVisible (slider6);
-        slider6.setRange (20, 20000.0);
-        slider6.setTextValueSuffix (" Hz");
-        slider6.setSliderStyle(Slider::Rotary);
-        slider6.setTextBoxStyle (Slider::TextBoxBelow, false, 100, 20);
-        slider6.addListener (this);
-        addAndMakeVisible (slider6Label);
-        slider6Label.setText ("Slider6", dontSendNotification);
-        slider6Label.setColour(slider6Label.textColourId, Colours::white);
+        // Bin 1 Button
+        bin1Button.setName("Bin1");
+        bin1Button.setButtonText("Bin 1");
+        bin1=false;
+        bin1Button.addListener(this);
+        addAndMakeVisible(bin1Button);
+        
+        // Bin 2 Button
+        bin2Button.setName("Bin2");
+        bin2Button.setButtonText("Bin 2");
+        bin2=false;
+        bin2Button.addListener(this);
+        addAndMakeVisible(bin2Button);
+        
+        // Bin 3 Button
+        bin3Button.setName("Bin3");
+        bin3Button.setButtonText("Bin 3");
+        bin3=false;
+        bin3Button.addListener(this);
+        addAndMakeVisible(bin3Button);
+        
+        // Bin 4 Button
+        bin4Button.setName("Bin4");
+        bin4Button.setButtonText("Bin 4");
+        bin4=false;
+        bin4Button.addListener(this);
+        addAndMakeVisible(bin4Button);
+        
+        // Stop MIDI Button
+        zeroMidi.setName("zeroMidi");
+        zeroMidi.setButtonText("Stop MIDI");
+        zeroMidi.addListener(this);
+        addAndMakeVisible(zeroMidi);
+        
         
         // Record Button
         recordButton.setName("Record");
@@ -374,28 +267,21 @@ MainContentComponent::MainContentComponent() : forwardFFT (fftOrder, false),
         addAndMakeVisible(titleLabel1);
         
         // Project Group Title
-        projectGroupTitle1.setText("A JLT-G", dontSendNotification);
-        projectGroupTitle2.setText("Project", dontSendNotification);
+        projectGroupTitle1.setText("A JLT-G Project", dontSendNotification);
         Font textFont2;
-        textFont2.setTypefaceName("Connecticut");
+        textFont2.setTypefaceName("BrushScript");
         textFont2.setBold(true);
         textFont2.setUnderline(true);
         textFont2.setHeight(15);
         projectGroupTitle1.setFont(textFont2);
-        projectGroupTitle2.setFont(textFont2);
         projectGroupTitle1.setColour(projectGroupTitle1.textColourId, Colour(0xff2ca1ff));
-        projectGroupTitle2.setColour(projectGroupTitle2.textColourId, Colour(0xff2ca1ff));
         addAndMakeVisible(projectGroupTitle1);
-        addAndMakeVisible(projectGroupTitle2);
         
         // MIDI Message
         prototypeMIDIMessage.setText("Test", dontSendNotification);
         addAndMakeVisible(prototypeMIDIMessage);
         
         // MIDI Listbox
-        //SparseSet<int> selections;
-        //selections.ad
-        //addAndMakeVisible(MidiOutputListBox);
         listBoxTitle.setText("MIDI Outputs", dontSendNotification );
         listBoxTitle.setColour(Label::textColourId, Colours::white);
         addAndMakeVisible(listBoxTitle);
@@ -453,11 +339,28 @@ MainContentComponent::~MainContentComponent()
     //
     void MainContentComponent::ConvertToMidi(float* rawData)
     {
-        int midiVal = (int)100*(*rawData);
-        jmap(abs(midiVal*100),0,50,1,127);
-        MidiMessage msg = MidiMessage::controllerEvent(1, 20, midiVal);
-        midiMsg = msg.getDescription();
-        sendToOutputs(msg);
+        int midiVal1 = (int)100*(rawData[0]);
+        int midiVal2= (int)100*(rawData[1]);
+        int midiVal3 = (int)100*(rawData[2]);
+        int midiVal4 = (int)100*(rawData[3]);
+        
+        jmap(abs(midiVal1*100),0,50,1,127);
+        jmap(abs(midiVal2*100),0,50,1,127);
+        jmap(abs(midiVal3*100),0,50,1,127);
+        jmap(abs(midiVal4*100),0,50,1,127);
+        
+        MidiMessage messages[4] = {MidiMessage::controllerEvent(1, 20, midiVal1),
+                                    MidiMessage::controllerEvent(1, 20, midiVal2),
+                                    MidiMessage::controllerEvent(1, 20, midiVal3),
+                                    MidiMessage::controllerEvent(1, 20, midiVal4)};
+        if (bin1 && midiVal1 !=0)
+            sendToOutputs(messages[0]);
+        else if (bin2 && midiVal2 !=0)
+            sendToOutputs(messages[1]);
+        else if (bin3&& midiVal3 !=0)
+            sendToOutputs(messages[2]);
+        else if (bin4&& midiVal4 !=0)
+            sendToOutputs(messages[3]);
         repaint();
         
         
@@ -481,11 +384,7 @@ MainContentComponent::~MainContentComponent()
             
             // Set false to fill filter banks again
             nextFFTBlockReady = false;
-            //for(int i = 0; i < 4; i++) {
-            //    printf("%f\n",unscaledAvg[i]);
-            //}
             ConvertToMidi(unscaledAvg);
-            std::cout << midiMsg << std::endl;
         }
     }
     
@@ -524,25 +423,7 @@ MainContentComponent::~MainContentComponent()
         // return *bank;
     }
     
-//    void pushNextSampleIntoFifo (float sample) noexcept
-//    {
-//        // if the fifo contains enough data, set a flag to say
-//        // that the next line should now be rendered..
-//        if (fifoIndex == fftSize)
-//        {
-//            if (! nextFFTBlockReady)
-//            {
-//                zeromem (fftData, sizeof (fftData));
-//                memcpy (fftData, fifo, sizeof (fifo));
-//                nextFFTBlockReady = true;
-//            }
-//            
-//            fifoIndex = 0;
-//        }
-//
-//        fifo[fifoIndex++] = sample;
-//        
-//    }
+
     void MainContentComponent::printFFT()
     {
         forwardFFT.performRealOnlyForwardTransform(fftData);
@@ -569,16 +450,59 @@ MainContentComponent::~MainContentComponent()
         // You can add your drawing code here!
         if (recordButton.getState() == Button::buttonDown)
         {
-            buttonText = "Recording.....";
+            buttonText = "Sending MIDI.....";
             prototypeMIDIMessage.setText(midiMsg, dontSendNotification);
         }
         else
         {
-            buttonText = "Hold To Record";
+            buttonText = "Hold To Send MIDI";
             prototypeMIDIMessage.setText("", dontSendNotification);
         }
+        if(bin1==true)
+        {
+            bin1Button.setColour(TextButton::buttonColourId, Colours::green);
+            bin2Button.setColour(TextButton::buttonColourId, Colours::grey);
+            bin3Button.setColour(TextButton::buttonColourId, Colours::grey);
+            bin4Button.setColour(TextButton::buttonColourId, Colours::grey);
+        }
+        else
+        {
+            bin1Button.setColour(TextButton::buttonColourId, Colours::grey);
+        }
+        if(bin2==true)
+        {
+            bin1Button.setColour(TextButton::buttonColourId, Colours::grey);
+            bin2Button.setColour(TextButton::buttonColourId, Colours::green);
+            bin3Button.setColour(TextButton::buttonColourId, Colours::grey);
+            bin4Button.setColour(TextButton::buttonColourId, Colours::grey);
+        }
+        else
+        {
+            bin2Button.setColour(TextButton::buttonColourId, Colours::grey);
+        }
+        if(bin3==true)
+        {
+            bin1Button.setColour(TextButton::buttonColourId, Colours::grey);
+            bin2Button.setColour(TextButton::buttonColourId, Colours::grey);
+            bin3Button.setColour(TextButton::buttonColourId, Colours::green);
+            bin4Button.setColour(TextButton::buttonColourId, Colours::grey);
+        }
+        else
+        {
+            bin3Button.setColour(TextButton::buttonColourId, Colours::grey);
+        }
+        if(bin4==true)
+        {
+            bin1Button.setColour(TextButton::buttonColourId, Colours::grey);
+            bin2Button.setColour(TextButton::buttonColourId, Colours::grey);
+            bin3Button.setColour(TextButton::buttonColourId, Colours::grey);
+            bin4Button.setColour(TextButton::buttonColourId, Colours::green);
+        }
+        else
+        {
+            bin4Button.setColour(TextButton::buttonColourId, Colours::grey);
+        }
         recordButton.setButtonText(buttonText);
-        //g.drawText(midiMsg,10, 40, 200, 860, true);
         
     }
 
@@ -593,26 +517,16 @@ MainContentComponent::~MainContentComponent()
         const int sliderLeft = 15;
         const int buttonSize = 90;
         const int buttonRow = 130;
-        slider1.setBounds (sliderLeft-10, buttonRow-10, buttonSize, buttonSize);
-        slider2.setBounds (sliderLeft + 100, buttonRow-60, buttonSize, buttonSize);
-        slider3.setBounds (sliderLeft+210, buttonRow-10, buttonSize, buttonSize);
-        slider4.setBounds (sliderLeft-10, buttonRow+140, buttonSize, buttonSize);
-        slider5.setBounds (sliderLeft+100, buttonRow+180, buttonSize, buttonSize);
-        slider6.setBounds (sliderLeft+210, buttonRow+140, buttonSize, buttonSize);
-        levelSlider.setBounds(20, 442, 280, buttonSize-75);
+        bin1Button.setBounds(sliderLeft+25, buttonRow, buttonSize+20, buttonSize+20);
+        bin2Button.setBounds(sliderLeft+155,buttonRow, buttonSize+20, buttonSize+20);
+        bin3Button.setBounds(sliderLeft+25, buttonRow+130, buttonSize+20, buttonSize+20);
+        bin4Button.setBounds(sliderLeft+155,buttonRow+130, buttonSize+20, buttonSize+20);
+        zeroMidi.setBounds(105,390, 100, 40);
+        levelSlider.setBounds(20, 455, 280, buttonSize-75);
         recordButton.setBounds(5, 485, 310, 95);
-        
-        slider1Label.setBounds(sliderLeft+10, buttonRow-25, 50, 15);
-        slider2Label.setBounds(sliderLeft+120, buttonRow-75, 50, 15);
-        slider3Label.setBounds(sliderLeft+230, buttonRow-25, 50, 15);
-        slider4Label.setBounds(sliderLeft+10, buttonRow+125, 50, 15);
-        slider5Label.setBounds(sliderLeft+120, buttonRow+165, 50, 15);
-        slider6Label.setBounds(sliderLeft+230, buttonRow+125, 50, 15);
-        
-        titleLabel1.setBounds(5,0,300, 70);
-        projectGroupTitle1.setBounds(250, 0, 300, 70);
-        projectGroupTitle2.setBounds(250, 20, 300, 70);
-        connectButton.setBounds(120, 190, 80, 80);
+        titleLabel1.setBounds(120,0,300, 70);
+        projectGroupTitle1.setBounds(103, 20, 300, 70);
+        connectButton.setBounds(5, 80, 310, 30);
         doneButton.setBounds(250, 540, 60, 40);
         prototypeMIDIMessage.setBounds(5, 465, 200, 15);
         MidiOutputListBox.setBounds(35, 100, 250, 400);
@@ -623,6 +537,7 @@ MainContentComponent::~MainContentComponent()
     }
     void MainContentComponent::sliderValueChanged (Slider* slider)
     {
+ 
     }
     
     
@@ -660,8 +575,6 @@ MainContentComponent::~MainContentComponent()
         midiString << (String (" vel = "));
         midiString << static_cast<int>(mm.getVelocity());
         midiString << "\n";
-        
-        //midiMonitor.insertTextAtCaret (midiString);
     }
     
     
@@ -791,7 +704,7 @@ void MainContentComponent::updateDeviceList (bool isInputDeviceList)
             // actually update the device list
             midiDevices = newDeviceList;
             
-            //TODO
+           
             // update the selection status of the combo-box
             MidiDeviceListBox* midiSelector =  midiOutputSelector;
             midiSelector->syncSelectedItemsWithDeviceList (midiDevices);
@@ -802,18 +715,10 @@ void MainContentComponent::updateDeviceList (bool isInputDeviceList)
         //std::cout << buttonThatWasClicked->getName() << std::endl;
         if(buttonThatWasClicked->getName() == "Connect")
         {
-            slider1.setVisible(false);
-            slider1Label.setVisible(false);
-            slider2.setVisible(false);
-            slider2Label.setVisible(false);
-            slider3.setVisible(false);
-            slider3Label.setVisible(false);
-            slider4.setVisible(false);
-            slider4Label.setVisible(false);
-            slider5.setVisible(false);
-            slider5Label.setVisible(false);
-            slider6.setVisible(false);
-            slider6Label.setVisible(false);
+            bin1Button.setVisible(false);
+            bin2Button.setVisible(false);
+            bin3Button.setVisible(false);
+            bin4Button.setVisible(false);
             recordButton.setVisible(false);
             levelSlider.setVisible(false);
             connectButton.setVisible(false);
@@ -823,18 +728,10 @@ void MainContentComponent::updateDeviceList (bool isInputDeviceList)
         }
         if(buttonThatWasClicked->getName() == "Done")
         {
-            slider1.setVisible(true);
-            slider1Label.setVisible(true);
-            slider2.setVisible(true);
-            slider2Label.setVisible(true);
-            slider3.setVisible(true);
-            slider3Label.setVisible(true);
-            slider4.setVisible(true);
-            slider4Label.setVisible(true);
-            slider5.setVisible(true);
-            slider5Label.setVisible(true);
-            slider6.setVisible(true);
-            slider6Label.setVisible(true);
+            bin1Button.setVisible(true);
+            bin2Button.setVisible(true);
+            bin3Button.setVisible(true);
+            bin4Button.setVisible(true);
             recordButton.setVisible(true);
             levelSlider.setVisible(true);
             connectButton.setVisible(true);
@@ -842,11 +739,47 @@ void MainContentComponent::updateDeviceList (bool isInputDeviceList)
             listBoxTitle.setVisible(false);
             midiOutputSelector->setVisible(false);
         }
-        
+        if(buttonThatWasClicked == &bin1Button)
+        {
+            bin1=!bin1;
+            bin2=false;
+            bin3=false;
+            bin4=false;
+            repaint();
+            std::cout << bin1 << bin2 << bin3 << bin4 << std::endl;
+        }
+        if(buttonThatWasClicked == &bin2Button)
+        {
+            bin1=false;
+            bin2=!bin2;
+            bin3=false;
+            bin4=false;
+            repaint();
+            std::cout << bin1 << bin2 << bin3 << bin4 << std::endl;
+        }
+        if(buttonThatWasClicked == &bin3Button)
+        {
+            bin1=false;
+            bin2=false;
+            bin3=!bin3;
+            bin4=false;
+            repaint();
+            std::cout << bin1 << bin2 << bin3 << bin4 << std::endl;
+        }
+        if(buttonThatWasClicked == &bin4Button)
+        {
+            bin1=false;
+            bin2=false;
+            bin3=false;
+            bin4=!bin4;
+            repaint();
+            std::cout << bin1 << bin2 << bin3 << bin4 << std::endl;
+        }
+        if(buttonThatWasClicked == &zeroMidi)
+        {
+            sendToOutputs(MidiMessage::controllerEvent(1, 20, 0));
+        }
     }
-
-
-
 
 // (This function is called by the app startup code to create our main component)
 Component* createMainContentComponent()     { return new MainContentComponent(); }

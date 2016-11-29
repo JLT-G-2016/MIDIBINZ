@@ -757,6 +757,7 @@
 		94296009596186AB959B8CC7 /* juce_mac_AudioCDBurner.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = juce_mac_AudioCDBurner.mm; path = ../../JuceLibraryCode/modules/juce_audio_devices/native/juce_mac_AudioCDBurner.mm; sourceTree = SOURCE_ROOT; };
 		948548AED004830129FC88C3 /* juce_Identifier.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_Identifier.cpp; path = ../../JuceLibraryCode/modules/juce_core/text/juce_Identifier.cpp; sourceTree = SOURCE_ROOT; };
 		94C28F0D3A3EF8954F802A89 /* juce_SubregionStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_SubregionStream.h; path = ../../JuceLibraryCode/modules/juce_core/streams/juce_SubregionStream.h; sourceTree = SOURCE_ROOT; };
+		94D8096BD9D0E924FAAB2ABD /* MainComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MainComponent.h; path = ../../Source/MainComponent.h; sourceTree = SOURCE_ROOT; };
 		9555A4A67989A817E554D27D /* juce_linux_Midi.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_linux_Midi.cpp; path = ../../JuceLibraryCode/modules/juce_audio_devices/native/juce_linux_Midi.cpp; sourceTree = SOURCE_ROOT; };
 		9568A17C4A7E86FF17F4DB37 /* juce_StringArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_StringArray.h; path = ../../JuceLibraryCode/modules/juce_core/text/juce_StringArray.h; sourceTree = SOURCE_ROOT; };
 		95E4FB94CC6034B7292AF271 /* juce_RelativeParallelogram.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_RelativeParallelogram.cpp; path = ../../JuceLibraryCode/modules/juce_gui_basics/positioning/juce_RelativeParallelogram.cpp; sourceTree = SOURCE_ROOT; };
@@ -3250,6 +3251,7 @@
 		E2ACDEDB5F73C7D84ACA6908 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				94D8096BD9D0E924FAAB2ABD /* MainComponent.h */,
 				031AECDA9FC1FC969C7BD449 /* Filter.cpp */,
 				35B89EFF2C961F5637A87EDB /* Filter.h */,
 				DE01FC3D65B23E7B0E435BC0 /* MainComponent.cpp */,
@@ -3599,7 +3601,7 @@
 				);
 				INFOPLIST_FILE = "Info-App.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_BUNDLE_IDENTIFIER = com.yjltg.MidiBinz;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ProtoBuild.MidiBinz;
 			};
 			name = Release;
 		};
@@ -3657,7 +3659,7 @@
 				);
 				INFOPLIST_FILE = "Info-App.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_BUNDLE_IDENTIFIER = com.yjltg.MidiBinz;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ProtoBuild.MidiBinz;
 			};
 			name = Debug;
 		};
