@@ -188,15 +188,6 @@ MainContentComponent::MainContentComponent() : forwardFFT (fftOrder, false),
         buttonText = "Hold To Send MIDI";
         setLookAndFeel (&altLookAndFeel);
         
-        // Mic Level Slider
-        levelSlider.setRange (0.0, 0.25);
-        levelSlider.setValue(0.10);
-        levelSlider.setTextBoxStyle (Slider::NoTextBox, false, 100, 20);
-        levelLabel.setText ("Mic Level", dontSendNotification);
-        levelLabel.setColour(Label::textColourId, Colours::white);
-        levelLabel.attachToComponent(&levelSlider, false);
-        addAndMakeVisible (levelSlider);
-        addAndMakeVisible (levelLabel);
         
         // specify the number of input and output channels that we want to open
         setAudioChannels (2, 0);
@@ -517,12 +508,11 @@ MainContentComponent::~MainContentComponent()
         const int sliderLeft = 15;
         const int buttonSize = 90;
         const int buttonRow = 130;
-        bin1Button.setBounds(sliderLeft+25, buttonRow, buttonSize+20, buttonSize+20);
-        bin2Button.setBounds(sliderLeft+155,buttonRow, buttonSize+20, buttonSize+20);
-        bin3Button.setBounds(sliderLeft+25, buttonRow+130, buttonSize+20, buttonSize+20);
-        bin4Button.setBounds(sliderLeft+155,buttonRow+130, buttonSize+20, buttonSize+20);
-        zeroMidi.setBounds(105,390, 100, 40);
-        levelSlider.setBounds(20, 455, 280, buttonSize-75);
+        bin1Button.setBounds(sliderLeft+25, buttonRow+20, buttonSize+20, buttonSize+20);
+        bin2Button.setBounds(sliderLeft+155,buttonRow+20, buttonSize+20, buttonSize+20);
+        bin3Button.setBounds(sliderLeft+25, buttonRow+150, buttonSize+20, buttonSize+20);
+        bin4Button.setBounds(sliderLeft+155,buttonRow+150, buttonSize+20, buttonSize+20);
+        zeroMidi.setBounds(105,410, 100, 40);
         recordButton.setBounds(5, 485, 310, 95);
         titleLabel1.setBounds(120,0,300, 70);
         projectGroupTitle1.setBounds(103, 20, 300, 70);
@@ -720,7 +710,6 @@ void MainContentComponent::updateDeviceList (bool isInputDeviceList)
             bin3Button.setVisible(false);
             bin4Button.setVisible(false);
             recordButton.setVisible(false);
-            levelSlider.setVisible(false);
             connectButton.setVisible(false);
             doneButton.setVisible(true);
             listBoxTitle.setVisible(true);
@@ -733,7 +722,6 @@ void MainContentComponent::updateDeviceList (bool isInputDeviceList)
             bin3Button.setVisible(true);
             bin4Button.setVisible(true);
             recordButton.setVisible(true);
-            levelSlider.setVisible(true);
             connectButton.setVisible(true);
             doneButton.setVisible(false);
             listBoxTitle.setVisible(false);

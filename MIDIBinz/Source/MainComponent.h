@@ -113,8 +113,6 @@ private:
     TextButton bin4Button;
     TextButton zeroMidi;
     Random random;
-    Slider levelSlider;
-    Label levelLabel;
     TextButton recordButton;
     TextButton connectButton;
     AltLookAndFeel altLookAndFeel;
