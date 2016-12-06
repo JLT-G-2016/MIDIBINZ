@@ -331,7 +331,7 @@ MainContentComponent::~MainContentComponent()
     void MainContentComponent::ConvertToMidi(float* rawData)
     {
         int midiVal1 = (int)100*(rawData[0]);
-        int midiVal2= (int)100*(rawData[1]);
+        int midiVal2 = (int)100*(rawData[1]);
         int midiVal3 = (int)100*(rawData[2]);
         int midiVal4 = (int)100*(rawData[3]);
         
@@ -341,16 +341,16 @@ MainContentComponent::~MainContentComponent()
         jmap(abs(midiVal4*100),0,50,1,127);
         
         MidiMessage messages[4] = {MidiMessage::controllerEvent(1, 20, midiVal1),
-                                    MidiMessage::controllerEvent(1, 20, midiVal2),
-                                    MidiMessage::controllerEvent(1, 20, midiVal3),
-                                    MidiMessage::controllerEvent(1, 20, midiVal4)};
+                                    MidiMessage::controllerEvent(1, 21, midiVal2),
+                                    MidiMessage::controllerEvent(1, 22, midiVal3),
+                                    MidiMessage::controllerEvent(1, 23, midiVal4)};
         if (bin1 && midiVal1 !=0)
             sendToOutputs(messages[0]);
-        else if (bin2 && midiVal2 !=0)
+        if (bin2 && midiVal2 !=0)
             sendToOutputs(messages[1]);
-        else if (bin3&& midiVal3 !=0)
+        if (bin3&& midiVal3 !=0)
             sendToOutputs(messages[2]);
-        else if (bin4&& midiVal4 !=0)
+        if (bin4&& midiVal4 !=0)
             sendToOutputs(messages[3]);
         repaint();
         
@@ -452,9 +452,6 @@ MainContentComponent::~MainContentComponent()
         if(bin1==true)
         {
             bin1Button.setColour(TextButton::buttonColourId, Colours::green);
-            bin2Button.setColour(TextButton::buttonColourId, Colours::grey);
-            bin3Button.setColour(TextButton::buttonColourId, Colours::grey);
-            bin4Button.setColour(TextButton::buttonColourId, Colours::grey);
         }
         else
         {
@@ -462,10 +459,7 @@ MainContentComponent::~MainContentComponent()
         }
         if(bin2==true)
         {
-            bin1Button.setColour(TextButton::buttonColourId, Colours::grey);
             bin2Button.setColour(TextButton::buttonColourId, Colours::green);
-            bin3Button.setColour(TextButton::buttonColourId, Colours::grey);
-            bin4Button.setColour(TextButton::buttonColourId, Colours::grey);
         }
         else
         {
@@ -473,10 +467,7 @@ MainContentComponent::~MainContentComponent()
         }
         if(bin3==true)
         {
-            bin1Button.setColour(TextButton::buttonColourId, Colours::grey);
-            bin2Button.setColour(TextButton::buttonColourId, Colours::grey);
             bin3Button.setColour(TextButton::buttonColourId, Colours::green);
-            bin4Button.setColour(TextButton::buttonColourId, Colours::grey);
         }
         else
         {
@@ -484,9 +475,7 @@ MainContentComponent::~MainContentComponent()
         }
         if(bin4==true)
         {
-            bin1Button.setColour(TextButton::buttonColourId, Colours::grey);
-            bin2Button.setColour(TextButton::buttonColourId, Colours::grey);
-            bin3Button.setColour(TextButton::buttonColourId, Colours::grey);
+         
             bin4Button.setColour(TextButton::buttonColourId, Colours::green);
         }
         else
@@ -730,35 +719,35 @@ void MainContentComponent::updateDeviceList (bool isInputDeviceList)
         if(buttonThatWasClicked == &bin1Button)
         {
             bin1=!bin1;
-            bin2=false;
-            bin3=false;
-            bin4=false;
+            //bin2=false;
+            //bin3=false;
+            //bin4=false;
             repaint();
             std::cout << bin1 << bin2 << bin3 << bin4 << std::endl;
         }
         if(buttonThatWasClicked == &bin2Button)
         {
-            bin1=false;
+            //bin1=false;
             bin2=!bin2;
-            bin3=false;
-            bin4=false;
+            //bin3=false;
+            //bin4=false;
             repaint();
             std::cout << bin1 << bin2 << bin3 << bin4 << std::endl;
         }
         if(buttonThatWasClicked == &bin3Button)
         {
-            bin1=false;
-            bin2=false;
+            //bin1=false;
+            //bin2=false;
             bin3=!bin3;
-            bin4=false;
+            //bin4=false;
             repaint();
             std::cout << bin1 << bin2 << bin3 << bin4 << std::endl;
         }
         if(buttonThatWasClicked == &bin4Button)
         {
-            bin1=false;
-            bin2=false;
-            bin3=false;
+            //bin1=false;
+            //bin2=false;
+            //bin3=false;
             bin4=!bin4;
             repaint();
             std::cout << bin1 << bin2 << bin3 << bin4 << std::endl;
