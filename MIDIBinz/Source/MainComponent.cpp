@@ -755,6 +755,9 @@ void MainContentComponent::updateDeviceList (bool isInputDeviceList)
         if(buttonThatWasClicked == &zeroMidi)
         {
             sendToOutputs(MidiMessage::controllerEvent(1, 20, 0));
+            sendToOutputs(MidiMessage::controllerEvent(1, 21, 0));
+            sendToOutputs(MidiMessage::controllerEvent(1, 22, 0));
+            sendToOutputs(MidiMessage::controllerEvent(1, 23, 0));
         }
     }
 
